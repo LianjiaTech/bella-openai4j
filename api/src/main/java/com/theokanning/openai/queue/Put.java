@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Represents a queue put operation for task queuing
@@ -62,5 +63,37 @@ public class Put {
     @JsonIgnore
     public String getFullQueueName() {
         return String.format("%s:%d", queue, level);
+    }
+
+    /**
+     * Determines the effective queue level based on the response mode and level
+     *
+     * @return the effective queue level
+     */
+    @JsonIgnore
+    public Integer getQueueLevel() {
+        if("blocking".equals(responseMode) || "streaming".equals(responseMode)) {
+            return 0;
+        } else if("callback".equals(responseMode) || "batch".equals(responseMode)) {
+            return getLevel() != null && getLevel() > 0 ? getLevel() : 1;
+        } else {
+            throw new IllegalArgumentException("Unsupported response mode: " + responseMode);
+        }
+    }
+
+    /**
+     * Determines the task timeout based on the response mode and specified timeout
+     *
+     * @return the task timeout in seconds
+     */
+    @JsonIgnore
+    public int getTaskTimeout() {
+        if("blocking".equals(responseMode) || "streaming".equals(responseMode)) {
+            return timeout > 0 ? Math.min(timeout, 300) : 300;
+        } else if("callback".equals(responseMode) || "batch".equals(responseMode)) {
+            return timeout > 0 ? timeout : 24 * 60 * 60;
+        } else {
+            throw new IllegalArgumentException("Unsupported response mode: " + responseMode);
+        }
     }
 }
