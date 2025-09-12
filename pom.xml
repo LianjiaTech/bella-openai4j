@@ -5,7 +5,7 @@
 
     <groupId>top.bella</groupId>
     <artifactId>openai-java</artifactId>
-    <version>0.23.42</version>
+    <version>0.23.43</version>
     <packaging>pom</packaging>
     <description>openai java 版本</description>
     <name>openai-java</name>
