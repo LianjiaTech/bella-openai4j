@@ -108,6 +108,11 @@ public class Task {
     private String responseMode;
 
     /**
+     * Additional metadata associated with the task
+     */
+    private Map<String, Object> metadata;
+
+    /**
      * Returns the full queue name by combining the queue name and level
      *
      * @return formatted queue name as "queueName:level"
