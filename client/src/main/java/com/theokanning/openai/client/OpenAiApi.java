@@ -43,6 +43,7 @@ import com.theokanning.openai.model.Model;
 import com.theokanning.openai.moderation.ModerationRequest;
 import com.theokanning.openai.moderation.ModerationResult;
 import com.theokanning.openai.queue.EventbusConfig;
+import com.theokanning.openai.queue.Metrics;
 import com.theokanning.openai.queue.Register;
 import com.theokanning.openai.queue.Put;
 import com.theokanning.openai.queue.Take;
@@ -397,6 +398,9 @@ public interface OpenAiApi {
 
     @POST("queue/{task_id}/complete")
     Single<String> completeTask(@Path("task_id") String taskId, @Body Map<String, Object> data);
+
+    @GET("queue/{queueName}/metrics")
+    Single<Metrics> getQueueMetrics(String queueName);
 
 }
 

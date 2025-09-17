@@ -779,6 +779,10 @@ public class OpenAiService {
         return execute(api.completeTask(taskId, data));
     }
 
+    public Object getQueueMetrics(String queueName) {
+        return execute(api.getQueueMetrics(queueName));
+    }
+
     public static OpenAiApi buildApi(String token, Duration timeout, String baseUrl) {
         OkHttpClient client = defaultClient(token, timeout);
         Retrofit retrofit = defaultRetrofit(client, mapper, baseUrl);
