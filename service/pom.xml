@@ -6,7 +6,7 @@
     <parent>
         <groupId>top.bella</groupId>
         <artifactId>openai-java</artifactId>
-        <version>0.23.86</version>
+        <version>0.23.87</version>
     </parent>
     <packaging>jar</packaging>
 
@@ -40,6 +40,11 @@
                     <groupId>com.fasterxml.jackson.core</groupId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.12.0</version>
         </dependency>
 
         <dependency>
