@@ -2,6 +2,7 @@ package com.theokanning.openai.completion.chat;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.theokanning.openai.assistants.message.content.AudioURL;
 import com.theokanning.openai.assistants.message.content.ImageFile;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -42,6 +43,10 @@ public class MultiMediaContent {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("input_audio")
     private InputAudio inputAudio;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty("audio_url")
+    private AudioURL audioUrl;
 
     public MultiMediaContent(String text) {
         this.type = "text";
