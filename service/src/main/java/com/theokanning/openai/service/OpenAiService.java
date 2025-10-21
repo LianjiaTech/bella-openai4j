@@ -110,7 +110,6 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -341,7 +340,7 @@ public class OpenAiService {
      */
     public File uploadFile(String purpose, byte[] bytes, String filename) {
         RequestBody purposeBody = RequestBody.create(MultipartBody.FORM, purpose);
-        RequestBody fileBody = RequestBody.create(FileUtil.getFileUploadMediaType(filename), bytes);
+        RequestBody fileBody = RequestBody.create(FileUtils.extraMediaType(filename), bytes);
         MultipartBody.Part body = MultipartBody.Part.createFormData("file", filename, fileBody);
         return execute(api.uploadFile(purposeBody, body));
     }
@@ -374,7 +373,7 @@ public class OpenAiService {
         RequestBody fileBody = new RequestBody() {
             @Override
             public MediaType contentType() {
-                return FileUtil.getFileUploadMediaType(filename);
+                return FileUtils.extraMediaType(filename);
             }
 
             @Override
