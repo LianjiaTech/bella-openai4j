@@ -1,6 +1,7 @@
 package com.theokanning.openai.file;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Data;
 
 /**
@@ -57,4 +58,34 @@ public class File {
     @JsonProperty("status_details")
     @Deprecated
     String statusDetails;
+
+    String url;
+    /**
+     * subtype of mime_type. eg: image/jpeg
+     */
+    @JsonProperty("mime_type")
+    String mimeType;
+    /**
+     * type of mime_type. eg: image
+     */
+    String type;
+    String extension;
+    @JsonProperty("is_dir")
+    Boolean isDir;
+    @JsonProperty("dom_tree_file_id")
+    String domTreeFileId;
+    @JsonProperty("pdf_file_id")
+    String pdfFileId;
+    Integer version;
+    @JsonProperty("space_code")
+    String spaceCode;
+    Long cuid;
+    @JsonProperty("cu_name")
+    String cuName;
+    Long ctime;
+    Long muid;
+    @JsonProperty("mu_name")
+    String muName;
+    Long mtime;
+    String description;
 }
