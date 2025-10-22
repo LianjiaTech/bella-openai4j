@@ -33,6 +33,7 @@ import com.theokanning.openai.completion.chat.ChatCompletionResult;
 import com.theokanning.openai.embedding.EmbeddingRequest;
 import com.theokanning.openai.embedding.EmbeddingResult;
 import com.theokanning.openai.file.File;
+import com.theokanning.openai.file.FileListRequest;
 import com.theokanning.openai.file.FileUrl;
 import com.theokanning.openai.fine_tuning.FineTuningEvent;
 import com.theokanning.openai.fine_tuning.FineTuningJob;
@@ -100,6 +101,9 @@ public interface OpenAiApi {
 
     @GET("files")
     Single<OpenAiResponse<File>> listFiles();
+
+    @POST("files/list")
+    Single<List<File>> listFiles(@Body FileListRequest request);
 
     @DELETE("files/{file_id}")
     Single<DeleteResult> deleteFile(@Path("file_id") String fileId);

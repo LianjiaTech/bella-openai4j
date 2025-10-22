@@ -59,6 +59,7 @@ import com.theokanning.openai.completion.chat.ChatToolCall;
 import com.theokanning.openai.embedding.EmbeddingRequest;
 import com.theokanning.openai.embedding.EmbeddingResult;
 import com.theokanning.openai.file.File;
+import com.theokanning.openai.file.FileListRequest;
 import com.theokanning.openai.file.FileUrl;
 import com.theokanning.openai.fine_tuning.FineTuningEvent;
 import com.theokanning.openai.fine_tuning.FineTuningJob;
@@ -266,6 +267,10 @@ public class OpenAiService {
 
     public List<File> listFiles() {
         return execute(api.listFiles()).data;
+    }
+
+    public List<File> listFiles(FileListRequest request) {
+        return execute(api.listFiles(request));
     }
 
     public DeleteResult deleteFile(String fileId) {
