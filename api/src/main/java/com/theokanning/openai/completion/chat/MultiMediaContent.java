@@ -24,7 +24,7 @@ import java.util.Base64;
 public class MultiMediaContent {
 
     /**
-     * The type of the content. Either "text", "image_url" or "input_audio".
+     * The type of the content. Either "text", "image_url" or "input_audio" or "audio_url".
      */
     @NonNull
     private String type;

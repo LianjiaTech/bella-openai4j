@@ -40,7 +40,7 @@ public class ContentSerializer extends JsonSerializer<Object> {
                         jsonGenerator.writeObjectField("input_audio", ic.getInputAudio());
                     }
                     jsonGenerator.writeEndObject();
-                }else if (item instanceof MultiMediaContent){
+                } else if (item instanceof MultiMediaContent){
                     MultiMediaContent mmc = (MultiMediaContent) item;
                     jsonGenerator.writeStartObject();
                     jsonGenerator.writeStringField("type", mmc.getType());
@@ -55,6 +55,9 @@ public class ContentSerializer extends JsonSerializer<Object> {
                     }
                     if (mmc.getType().equals("input_audio")) {
                         jsonGenerator.writeObjectField("input_audio", mmc.getInputAudio());
+                    }
+                    if (mmc.getType().equals("audio_url")) {
+                        jsonGenerator.writeObjectField("audio_url", mmc.getAudioUrl());
                     }
                     jsonGenerator.writeEndObject();
                 }
