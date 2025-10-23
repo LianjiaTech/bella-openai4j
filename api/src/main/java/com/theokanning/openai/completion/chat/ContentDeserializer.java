@@ -45,7 +45,7 @@ public class ContentDeserializer extends JsonDeserializer<Object> {
             if ("type".equals(fieldName)) {
                 content.setType(jsonParser.getText());
             } else if ("text".equals(fieldName)) {
-                content.setText(jsonParser.getText());
+                content.setText(jsonParser.getValueAsString());
             } else if ("image_url".equals(fieldName)) {
                 content.setImageUrl(parseImageUrl(jsonParser));
             } else if ("image_file".equals(fieldName)) {
@@ -60,15 +60,18 @@ public class ContentDeserializer extends JsonDeserializer<Object> {
     }
 
     private ImageFile parseImageFile(JsonParser jsonParser) throws IOException {
+        if(jsonParser.getCurrentToken() == JsonToken.VALUE_NULL) {
+            return null;
+        }
         String fileId = null;
         String detail = null;
         while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
             String fieldName = jsonParser.getCurrentName();
             jsonParser.nextToken();
             if ("file_id".equals(fieldName)) {
-                fileId = jsonParser.getText();
+                fileId = jsonParser.getValueAsString();
             } else if ("detail".equals(fieldName)) {
-                detail = jsonParser.getText();
+                detail = jsonParser.getValueAsString();
             }
         }
         return new ImageFile(fileId, detail);
@@ -77,13 +80,16 @@ public class ContentDeserializer extends JsonDeserializer<Object> {
     private ImageUrl parseImageUrl(JsonParser jsonParser) throws IOException {
         String url = null;
         String detail = null;
+        if(jsonParser.getCurrentToken() == JsonToken.VALUE_NULL) {
+            return null;
+        }
         while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
             String fieldName = jsonParser.getCurrentName();
             jsonParser.nextToken();
             if ("url".equals(fieldName)) {
-                url = jsonParser.getText();
+                url = jsonParser.getValueAsString();
             } else if ("detail".equals(fieldName)) {
-                detail = jsonParser.getText();
+                detail = jsonParser.getValueAsString();
             }
         }
         return new ImageUrl(url, detail);
@@ -92,13 +98,16 @@ public class ContentDeserializer extends JsonDeserializer<Object> {
     private InputAudio parseInputAudio(JsonParser jsonParser) throws IOException {
         String data = null;
         String format = null;
+        if(jsonParser.getCurrentToken() == JsonToken.VALUE_NULL) {
+            return null;
+        }
         while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
             String fieldName = jsonParser.getCurrentName();
             jsonParser.nextToken();
             if ("data".equals(fieldName)) {
-                data = jsonParser.getText();
+                data = jsonParser.getValueAsString();
             } else if ("format".equals(fieldName)) {
-                format = jsonParser.getText();
+                format = jsonParser.getValueAsString();
             }
         }
         return new InputAudio(data, format);
@@ -107,13 +116,16 @@ public class ContentDeserializer extends JsonDeserializer<Object> {
     private AudioURL parseAudioUrl(JsonParser jsonParser) throws IOException {
         String url = null;
         String audioTranscript = null;
+        if(jsonParser.getCurrentToken() == JsonToken.VALUE_NULL) {
+            return null;
+        }
         while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
             String fieldName = jsonParser.getCurrentName();
             jsonParser.nextToken();
             if ("url".equals(fieldName)) {
-                url = jsonParser.getText();
+                url = jsonParser.getValueAsString();
             } else if ("audio_transcript".equals(fieldName)) {
-                audioTranscript = jsonParser.getText();
+                audioTranscript = jsonParser.getValueAsString();
             }
         }
         return new AudioURL(url, audioTranscript);
