@@ -1,5 +1,6 @@
 package com.theokanning.openai.batch;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -126,4 +127,12 @@ public class Batch {
      */
 
     Map<String, String> metadata;
+
+    @JsonIgnore
+    public boolean isCompleted() {
+        long total = getRequestCounts().getTotal();
+        long completed = getRequestCounts().getCompleted();
+        long failed = getRequestCounts().getFailed();
+        return completed + failed >= total;
+    }
 }
