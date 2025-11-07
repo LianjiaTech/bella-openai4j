@@ -109,64 +109,91 @@ public class ToolChoice {
         }
 
         private Function parseFunction(JsonParser jsonParser) throws IOException {
-            if (jsonParser.getCurrentToken() == JsonToken.START_OBJECT) {
-                // 处理对象的情况
-                Function function = new Function();
-                while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
-                    // 判断对象内元素类型并进行相应的反序列化
-                    if (jsonParser.getCurrentName().equals("name")) {
-                        function.setName(jsonParser.nextTextValue());
-                    }
-                }
-                return function;
+            JsonToken currentToken = jsonParser.getCurrentToken();
+
+            if (currentToken == JsonToken.VALUE_NULL) {
+                return null;
             }
-            //抛出异常
-            throw new IllegalArgumentException("Invalid Function");
+
+            if (currentToken != JsonToken.START_OBJECT) {
+                throw new IOException("Expected START_OBJECT for Function, but got: " + currentToken);
+            }
+
+            // 处理对象的情况
+            Function function = new Function();
+            while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
+                // 判断对象内元素类型并进行相应的反序列化
+                if (jsonParser.getCurrentName().equals("name")) {
+                    function.setName(jsonParser.nextTextValue());
+                }
+            }
+            return function;
         }
 
         private AllowedTools parseAllowedTools(JsonParser jsonParser) throws IOException {
-            if (jsonParser.getCurrentToken() == JsonToken.START_OBJECT) {
-                AllowedTools allowedTools = new AllowedTools();
-                while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
-                    String fieldName = jsonParser.getCurrentName();
-                    if ("mode".equals(fieldName)) {
-                        allowedTools.setMode(jsonParser.nextTextValue());
-                    } else if ("tools".equals(fieldName)) {
-                        jsonParser.nextToken();
-                        allowedTools.setTools(parseToolsList(jsonParser));
-                    }
-                }
-                return allowedTools;
+            JsonToken currentToken = jsonParser.getCurrentToken();
+
+            if (currentToken == JsonToken.VALUE_NULL) {
+                return null;
             }
-            throw new IllegalArgumentException("Invalid AllowedTools");
+
+            if (currentToken != JsonToken.START_OBJECT) {
+                throw new IOException("Expected START_OBJECT for AllowedTools, but got: " + currentToken);
+            }
+
+            AllowedTools allowedTools = new AllowedTools();
+            while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = jsonParser.getCurrentName();
+                if ("mode".equals(fieldName)) {
+                    allowedTools.setMode(jsonParser.nextTextValue());
+                } else if ("tools".equals(fieldName)) {
+                    jsonParser.nextToken();
+                    allowedTools.setTools(parseToolsList(jsonParser));
+                }
+            }
+            return allowedTools;
         }
 
         private List<Tool> parseToolsList(JsonParser jsonParser) throws IOException {
-            if (jsonParser.getCurrentToken() == JsonToken.START_ARRAY) {
-                List<Tool> tools = new java.util.ArrayList<>();
-                while (jsonParser.nextToken() != JsonToken.END_ARRAY) {
-                    tools.add(parseTool(jsonParser));
-                }
-                return tools;
+            JsonToken currentToken = jsonParser.getCurrentToken();
+
+            if (currentToken == JsonToken.VALUE_NULL) {
+                return null;
             }
-            throw new IllegalArgumentException("Invalid Tools Array");
+
+            if (currentToken != JsonToken.START_ARRAY) {
+                throw new IOException("Expected START_ARRAY for Tools, but got: " + currentToken);
+            }
+
+            List<Tool> tools = new java.util.ArrayList<>();
+            while (jsonParser.nextToken() != JsonToken.END_ARRAY) {
+                tools.add(parseTool(jsonParser));
+            }
+            return tools;
         }
 
         private Tool parseTool(JsonParser jsonParser) throws IOException {
-            if (jsonParser.getCurrentToken() == JsonToken.START_OBJECT) {
-                Tool tool = new Tool();
-                while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
-                    String fieldName = jsonParser.getCurrentName();
-                    if ("type".equals(fieldName)) {
-                        tool.setType(jsonParser.nextTextValue());
-                    } else if ("function".equals(fieldName)) {
-                        jsonParser.nextToken();
-                        tool.setFunction(parseFunction(jsonParser));
-                    }
-                }
-                return tool;
+            JsonToken currentToken = jsonParser.getCurrentToken();
+
+            if (currentToken == JsonToken.VALUE_NULL) {
+                return null;
             }
-            throw new IllegalArgumentException("Invalid Tool");
+
+            if (currentToken != JsonToken.START_OBJECT) {
+                throw new IOException("Expected START_OBJECT for Tool, but got: " + currentToken);
+            }
+
+            Tool tool = new Tool();
+            while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = jsonParser.getCurrentName();
+                if ("type".equals(fieldName)) {
+                    tool.setType(jsonParser.nextTextValue());
+                } else if ("function".equals(fieldName)) {
+                    jsonParser.nextToken();
+                    tool.setFunction(parseFunction(jsonParser));
+                }
+            }
+            return tool;
         }
     }
 

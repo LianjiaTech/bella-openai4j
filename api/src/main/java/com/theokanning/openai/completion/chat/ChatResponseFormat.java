@@ -78,6 +78,7 @@ public class ChatResponseFormat {
 
     @NoArgsConstructor
     public static class ChatResponseFormatDeserializer extends JsonDeserializer<ChatResponseFormat> {
+
         @Override
         public ChatResponseFormat deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
             if (jsonParser.getCurrentToken() == JsonToken.VALUE_STRING) {

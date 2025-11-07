@@ -16,6 +16,7 @@ import java.util.List;
  * @date 2024年04月10 11:17
  **/
 public class ContentDeserializer extends JsonDeserializer<Object> {
+
     @Override
     public Object deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
         if (jsonParser.getCurrentToken() == JsonToken.VALUE_STRING) {
@@ -39,9 +40,11 @@ public class ContentDeserializer extends JsonDeserializer<Object> {
 
     MultiMediaContent parseContent(JsonParser jsonParser) throws IOException {
         MultiMediaContent content = new MultiMediaContent();
+
         while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
             String fieldName = jsonParser.getCurrentName();
             jsonParser.nextToken();
+
             if ("type".equals(fieldName)) {
                 content.setType(jsonParser.getText());
             } else if ("text".equals(fieldName)) {
@@ -60,14 +63,25 @@ public class ContentDeserializer extends JsonDeserializer<Object> {
     }
 
     private ImageFile parseImageFile(JsonParser jsonParser) throws IOException {
-        if(jsonParser.getCurrentToken() == JsonToken.VALUE_NULL) {
+        JsonToken currentToken = jsonParser.getCurrentToken();
+
+        // 关键修复1: 检查null值
+        if (currentToken == JsonToken.VALUE_NULL) {
             return null;
         }
+
+        // 关键修复2: 验证必须是对象开始
+        if (currentToken != JsonToken.START_OBJECT) {
+            throw new IOException("Expected START_OBJECT for image_file, but got: " + currentToken);
+        }
+
         String fileId = null;
         String detail = null;
+
         while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
             String fieldName = jsonParser.getCurrentName();
             jsonParser.nextToken();
+
             if ("file_id".equals(fieldName)) {
                 fileId = jsonParser.getValueAsString();
             } else if ("detail".equals(fieldName)) {
@@ -78,14 +92,23 @@ public class ContentDeserializer extends JsonDeserializer<Object> {
     }
 
     private ImageUrl parseImageUrl(JsonParser jsonParser) throws IOException {
-        String url = null;
-        String detail = null;
-        if(jsonParser.getCurrentToken() == JsonToken.VALUE_NULL) {
+        JsonToken currentToken = jsonParser.getCurrentToken();
+
+        if (currentToken == JsonToken.VALUE_NULL) {
             return null;
         }
+
+        if (currentToken != JsonToken.START_OBJECT) {
+            throw new IOException("Expected START_OBJECT for image_url, but got: " + currentToken);
+        }
+
+        String url = null;
+        String detail = null;
+
         while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
             String fieldName = jsonParser.getCurrentName();
             jsonParser.nextToken();
+
             if ("url".equals(fieldName)) {
                 url = jsonParser.getValueAsString();
             } else if ("detail".equals(fieldName)) {
@@ -96,14 +119,23 @@ public class ContentDeserializer extends JsonDeserializer<Object> {
     }
 
     private InputAudio parseInputAudio(JsonParser jsonParser) throws IOException {
-        String data = null;
-        String format = null;
-        if(jsonParser.getCurrentToken() == JsonToken.VALUE_NULL) {
+        JsonToken currentToken = jsonParser.getCurrentToken();
+
+        if (currentToken == JsonToken.VALUE_NULL) {
             return null;
         }
+
+        if (currentToken != JsonToken.START_OBJECT) {
+            throw new IOException("Expected START_OBJECT for input_audio, but got: " + currentToken);
+        }
+
+        String data = null;
+        String format = null;
+
         while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
             String fieldName = jsonParser.getCurrentName();
             jsonParser.nextToken();
+
             if ("data".equals(fieldName)) {
                 data = jsonParser.getValueAsString();
             } else if ("format".equals(fieldName)) {
@@ -114,14 +146,23 @@ public class ContentDeserializer extends JsonDeserializer<Object> {
     }
 
     private AudioURL parseAudioUrl(JsonParser jsonParser) throws IOException {
-        String url = null;
-        String audioTranscript = null;
-        if(jsonParser.getCurrentToken() == JsonToken.VALUE_NULL) {
+        JsonToken currentToken = jsonParser.getCurrentToken();
+
+        if (currentToken == JsonToken.VALUE_NULL) {
             return null;
         }
+
+        if (currentToken != JsonToken.START_OBJECT) {
+            throw new IOException("Expected START_OBJECT for audio_url, but got: " + currentToken);
+        }
+
+        String url = null;
+        String audioTranscript = null;
+
         while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
             String fieldName = jsonParser.getCurrentName();
             jsonParser.nextToken();
+
             if ("url".equals(fieldName)) {
                 url = jsonParser.getValueAsString();
             } else if ("audio_transcript".equals(fieldName)) {
