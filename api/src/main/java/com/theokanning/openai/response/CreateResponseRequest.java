@@ -70,7 +70,7 @@ public class CreateResponseRequest implements IUssrRequest {
     private String previousResponseId;
 
     /**
-     * Cache key for response optimization.
+     * Cache key for system prompt.
      */
     @JsonProperty("prompt_cache_key")
     private String promptCacheKey;

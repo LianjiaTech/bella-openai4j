@@ -189,4 +189,10 @@ public class ChatCompletionRequest {
      */
     @JsonProperty("reasoning_effort")
     private String reasoningEffort;
+
+    /**
+     * Cache key for system prompt.
+     */
+    @JsonProperty("prompt_cache_key")
+    private String promptCacheKey;
 }
