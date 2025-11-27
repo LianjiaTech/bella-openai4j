@@ -4,8 +4,11 @@ import com.theokanning.openai.queue.Put;
 import com.theokanning.openai.queue.Register;
 import com.theokanning.openai.queue.Take;
 import com.theokanning.openai.queue.Task;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -13,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 /**
  * Queue operation tests Note: These tests are disabled as they require a custom queue service backend that implements the /v1/queue/* endpoints,
@@ -21,7 +25,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @Disabled("Queue endpoints require custom backend service")
 public class QueueTest {
 
-    com.theokanning.openai.service.OpenAiService service = new OpenAiService();
+    @Mock
+    private OpenAiService service;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
 
     @Test
     void registerQueue() {
@@ -89,5 +99,29 @@ public class QueueTest {
         String result = service.completeTask(taskId, data);
 
         assertNotNull(result);
+    }
+
+    @Test
+    void getTask() {
+        String taskId = "test-task-id-123";
+        
+        // Create a mock Task object
+        Task expectedTask = Task.builder()
+                .taskId(taskId)
+                .queue("test-queue")
+                .status("pending")
+                .build();
+
+        // Mock the service call
+        when(service.getTask(taskId)).thenReturn(expectedTask);
+
+        // Execute the test
+        Task result = service.getTask(taskId);
+
+        // Verify the results
+        assertNotNull(result);
+        assertEquals(taskId, result.getTaskId());
+        assertEquals("test-queue", result.getQueue());
+        assertEquals("pending", result.getStatus());
     }
 }
