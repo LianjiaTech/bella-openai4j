@@ -6,7 +6,7 @@
 
     <groupId>io.github.ke</groupId>
     <artifactId>example</artifactId>
-    <version>0.23.93</version>
+    <version>0.23.98</version>
     <name>example</name>
 
     <properties>
