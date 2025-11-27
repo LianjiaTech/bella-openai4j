@@ -412,6 +412,9 @@ public interface OpenAiApi {
     @POST("queue/{task_id}/complete")
     Single<String> completeTask(@Path("task_id") String taskId, @Body Map<String, Object> data);
 
+    @GET("queue/{task_id}")
+    Single<Task> getTask(@Path("task_id") String taskId);
+
     @POST("web/search")
     Single<WebSearchResponse> webSearch(@Body WebSearchRequest request);
 
