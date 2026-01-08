@@ -930,6 +930,10 @@ public class OpenAiService {
         return execute(api.completeTask(taskId, data));
     }
 
+    public Task getTask(String taskId) {
+        return execute(api.getTask(taskId));
+    }
+
     public static OpenAiApi buildApi(String token, Duration timeout, String baseUrl) {
         OkHttpClient client = defaultClient(token, timeout);
         Retrofit retrofit = defaultRetrofit(client, mapper, baseUrl);
