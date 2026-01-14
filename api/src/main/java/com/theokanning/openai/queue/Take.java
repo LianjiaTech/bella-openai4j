@@ -29,7 +29,10 @@ public class Take {
      * Maximum number of tasks to retrieve
      */
     private Integer size;
-
+    /**
+     * worker process timeout for a task
+     */
+    private int processTimeout;
     /**
      * The strategy for taking tasks from queues (default: "fifo") Supported strategies: "fifo", "round_robin", "active_passive"
      */
