@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Represents a queue put operation for task queuing
@@ -31,7 +30,8 @@ public class Put {
     /**
      * Used for fine-grained priority control in callback mode Lower numbers have higher priority (1 > 2 > 3) Currently not supported
      */
-    private Integer level;
+    @Builder.Default
+    private Integer level = 0;
 
     /**
      * The data payload to be processed
@@ -42,6 +42,7 @@ public class Put {
      * The response mode for the operation (default: "callback") Supported modes: "callback", "blocking", "streaming"
      */
     @Builder.Default
+    @JsonProperty("response_mode")
     private String responseMode = "callback";
 
     /**
