@@ -34,6 +34,10 @@ public class Take {
      */
     private int processTimeout;
     /**
+     * worker process max retries for a task
+     */
+    private int processMaxRetries;
+    /**
      * The strategy for taking tasks from queues (default: "fifo") Supported strategies: "fifo", "round_robin", "active_passive"
      */
     @Builder.Default
