@@ -45,6 +45,7 @@ import com.theokanning.openai.model.Model;
 import com.theokanning.openai.moderation.ModerationRequest;
 import com.theokanning.openai.moderation.ModerationResult;
 import com.theokanning.openai.queue.EventbusConfig;
+import com.theokanning.openai.queue.Queue;
 import com.theokanning.openai.queue.Register;
 import com.theokanning.openai.queue.Put;
 import com.theokanning.openai.queue.Take;
@@ -414,6 +415,9 @@ public interface OpenAiApi {
 
     @GET("queue/{task_id}")
     Single<Task> getTask(@Path("task_id") String taskId);
+
+    @GET("queue/{queue}/metadata")
+    Single<Queue> getQueue(@Path("queue") String queue);
 
     @POST("web/search")
     Single<WebSearchResponse> webSearch(@Body WebSearchRequest request);
