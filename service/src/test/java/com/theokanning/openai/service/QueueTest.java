@@ -1,6 +1,7 @@
 package com.theokanning.openai.service;
 
 import com.theokanning.openai.queue.Put;
+import com.theokanning.openai.queue.Queue;
 import com.theokanning.openai.queue.Register;
 import com.theokanning.openai.queue.Take;
 import com.theokanning.openai.queue.Task;
@@ -104,7 +105,7 @@ public class QueueTest {
     @Test
     void getTask() {
         String taskId = "test-task-id-123";
-        
+
         // Create a mock Task object
         Task expectedTask = Task.builder()
                 .taskId(taskId)
@@ -123,5 +124,23 @@ public class QueueTest {
         assertEquals(taskId, result.getTaskId());
         assertEquals("test-queue", result.getQueue());
         assertEquals("pending", result.getStatus());
+    }
+
+    @Test
+    void getQueue() {
+        String queueName = "test-queue";
+
+        Queue expectedQueue = Queue.builder()
+                .queue(queueName)
+                .endpoint("http://localhost:8080/webhook")
+                .build();
+
+        when(service.getQueue(queueName)).thenReturn(expectedQueue);
+
+        Queue result = service.getQueue(queueName);
+
+        assertNotNull(result);
+        assertEquals(queueName, result.getQueue());
+        assertEquals("http://localhost:8080/webhook", result.getEndpoint());
     }
 }
