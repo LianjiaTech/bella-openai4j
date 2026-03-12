@@ -74,6 +74,7 @@ import com.theokanning.openai.moderation.ModerationRequest;
 import com.theokanning.openai.moderation.ModerationResult;
 import com.theokanning.openai.queue.EventbusConfig;
 import com.theokanning.openai.queue.Put;
+import com.theokanning.openai.queue.Queue;
 import com.theokanning.openai.queue.Register;
 import com.theokanning.openai.queue.Take;
 import com.theokanning.openai.queue.Task;
@@ -932,6 +933,10 @@ public class OpenAiService {
 
     public Task getTask(String taskId) {
         return execute(api.getTask(taskId));
+    }
+
+    public Queue getQueue(String queue) {
+        return execute(api.getQueue(queue));
     }
 
     public static OpenAiApi buildApi(String token, Duration timeout, String baseUrl) {
