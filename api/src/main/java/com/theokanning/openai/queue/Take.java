@@ -1,5 +1,6 @@
 package com.theokanning.openai.queue;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,14 +33,22 @@ public class Take {
     /**
      * worker process timeout for a task
      */
+    @JsonProperty("process_timeout")
     private int processTimeout;
     /**
      * worker process max retries for a task
      */
+    @JsonProperty("process_max_retries")
     private int processMaxRetries;
     /**
      * The strategy for taking tasks from queues (default: "fifo") Supported strategies: "fifo", "round_robin", "active_passive"
      */
     @Builder.Default
     private String strategy = "fifo";
+
+    /**
+     * Only retrieve tasks created within the last N seconds (0 means no time restriction)
+     */
+    @JsonProperty("min_age_seconds")
+    private long minAgeSeconds;
 }
