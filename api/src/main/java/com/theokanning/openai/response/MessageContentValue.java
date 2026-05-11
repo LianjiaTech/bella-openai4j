@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Wrapper for message content that can be either a string or array of input content.
  *
- * @see <a href="https://platform.openai.com/docs/api-reference/response/create">Response API</a>
+ * @see <a href="https://developers.openai.com/api/reference/resources/responses/methods/create">Response API</a>
  */
 @Data
 @NoArgsConstructor

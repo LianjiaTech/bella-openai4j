@@ -21,7 +21,7 @@ import java.util.List;
  * Wrapper for input field that can be: - String (text input) - List<ConversationItem> (array of mixed input objects: messages, conversation items,
  * references)
  *
- * @see <a href="https://platform.openai.com/docs/api-reference/response/create">Response API</a>
+ * @see <a href="https://developers.openai.com/api/reference/resources/responses/methods/create">Response API</a>
  */
 @Data
 @NoArgsConstructor

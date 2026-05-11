@@ -20,7 +20,7 @@ import java.util.Map;
 /**
  * Request to create a new model response with optional tool usage and conversation context.
  *
- * @see <a href="https://platform.openai.com/docs/api-reference/response/create">Response API</a>
+ * @see <a href="https://developers.openai.com/api/reference/resources/responses/methods/create">Response API</a>
  */
 @Data
 @Builder

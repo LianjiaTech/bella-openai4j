@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Wrapper for tool_choice field that can be a string, allowed_tools object, or specific tool object.
  *
- * @see <a href="https://platform.openai.com/docs/api-reference/response/create">Response API</a>
+ * @see <a href="https://developers.openai.com/api/reference/resources/responses/methods/create">Response API</a>
  */
 @Data
 @NoArgsConstructor
