@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 /**
  * Computer use tool definition for controlling virtual computer environments.
  *
- * @see <a href="https://platform.openai.com/docs/api-reference/response/create">Response API</a>
+ * @see <a href="https://developers.openai.com/api/reference/resources/responses/methods/create">Response API</a>
  */
 @Data
 @Builder

@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 /**
  * Messages sent to the model with role-based instruction hierarchy.
  *
- * @see <a href="https://platform.openai.com/docs/api-reference/response/create">Response API</a>
+ * @see <a href="https://developers.openai.com/api/reference/resources/responses/methods/create">Response API</a>
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

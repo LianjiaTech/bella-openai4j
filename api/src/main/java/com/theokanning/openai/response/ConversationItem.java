@@ -24,7 +24,7 @@ import com.theokanning.openai.response.tool.output.LocalShellCallOutput;
 /**
  * Base interface for all conversation items (both input and output). This includes input messages, response items, and tool call outputs.
  *
- * @see <a href="https://platform.openai.com/docs/api-reference/response/create">Response API</a>
+ * @see <a href="https://developers.openai.com/api/reference/resources/responses/methods/create">Response API</a>
  */
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
