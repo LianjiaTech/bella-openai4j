@@ -20,7 +20,7 @@ import com.theokanning.openai.response.tool.WebSearchToolCall;
  * Base interface for response output items only. InputMessage is not a ResponseItem since it's input data, not response output. Only OutputMessage
  * (assistant role) and tool calls are ResponseItems. ResponseItem extends ConversationItem.
  *
- * @see <a href="https://platform.openai.com/docs/api-reference/response/create">Response API</a>
+ * @see <a href="https://developers.openai.com/api/reference/resources/responses/methods/create">Response API</a>
  */
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,

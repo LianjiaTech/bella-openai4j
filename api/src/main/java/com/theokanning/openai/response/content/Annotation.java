@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 /**
  * Base class for annotations that provide source references.
  *
- * @see <a href="https://platform.openai.com/docs/api-reference/response/create">Response API</a>
+ * @see <a href="https://developers.openai.com/api/reference/resources/responses/methods/create">Response API</a>
  */
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
