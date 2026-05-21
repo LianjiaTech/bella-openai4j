@@ -54,8 +54,7 @@ public class Put {
     /**
      * The timeout duration for the operation in seconds
      */
-    @Builder.Default
-    private Integer timeout = 300;
+    private Integer timeout;
 
     /**
      * Used to trace the  task or batch that spawned this task
@@ -97,20 +96,11 @@ public class Put {
     @JsonIgnore
     public int getTaskTimeout() {
         if("blocking".equals(responseMode) || "streaming".equals(responseMode)) {
-            return timeout > 0 ? Math.min(timeout, 300) : 300;
+            return timeout != null && timeout > 0 ? Math.min(timeout, 600) : 600;
         } else if("callback".equals(responseMode) || "batch".equals(responseMode)) {
-            return timeout > 0 ? timeout : 24 * 60 * 60;
+            return timeout != null && timeout > 0 ? timeout : 24 * 60 * 60;
         } else {
             throw new IllegalArgumentException("Unsupported response mode: " + responseMode);
         }
-    }
-
-    /**
-     * Sets the timeout value. If null is provided, it will be set to 300.
-     *
-     * @param timeout the timeout duration in seconds
-     */
-    public void setTimeout(Integer timeout) {
-        this.timeout = timeout != null ? timeout : 300;
     }
 }
