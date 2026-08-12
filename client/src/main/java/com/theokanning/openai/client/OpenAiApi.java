@@ -208,7 +208,7 @@ public interface OpenAiApi {
     // --- Find & Info ---
 
     @GET("files/find")
-    Single<List<File>> findFiles(@QueryMap Map<String, Object> queryMap);
+    Single<OpenAiResponse<File>> findFiles(@QueryMap Map<String, Object> queryMap);
 
     @GET("files/{file_id}/info")
     Single<File> retrieveFileInfo(@Path("file_id") String fileId);

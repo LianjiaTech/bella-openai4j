@@ -5,7 +5,5 @@ import lombok.Data;
 @Data
 public class FileExistsResponse {
 
-    private Boolean exists;
-
-    private File file;
+    private boolean exists;
 }

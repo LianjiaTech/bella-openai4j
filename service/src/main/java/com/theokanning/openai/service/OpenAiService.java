@@ -432,7 +432,7 @@ public class OpenAiService {
     public List<File> findFiles(FindFilesQuery query) {
         Map<String, Object> queryMap = mapper.convertValue(query, new TypeReference<Map<String, Object>>() {});
         queryMap.values().removeIf(Objects::isNull);
-        return execute(api.findFiles(queryMap));
+        return execute(api.findFiles(queryMap)).data;
     }
 
     public File retrieveFileInfo(String fileId) {
@@ -584,14 +584,8 @@ public class OpenAiService {
     private File executeUploadFile(FileUploadRequest request, MultipartBody.Part filePart) {
         RequestBody purposeBody = request.getPurpose() != null
                 ? RequestBody.create(MultipartBody.FORM, request.getPurpose()) : null;
-        RequestBody metadataBody = null;
-        if (request.getMetadata() != null) {
-            try {
-                metadataBody = RequestBody.create(MultipartBody.FORM, mapper.writeValueAsString(request.getMetadata()));
-            } catch (JsonProcessingException e) {
-                throw new IllegalStateException("Failed to serialize metadata", e);
-            }
-        }
+        RequestBody metadataBody = request.getMetadata() != null
+                ? RequestBody.create(MultipartBody.FORM, request.getMetadata()) : null;
         RequestBody getUrlBody = request.getGetUrl() != null
                 ? RequestBody.create(MultipartBody.FORM, request.getGetUrl().toString()) : null;
         RequestBody expiresBody = request.getExpires() != null

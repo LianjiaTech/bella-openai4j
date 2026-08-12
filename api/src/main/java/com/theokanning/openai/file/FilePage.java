@@ -10,6 +10,9 @@ public class FilePage {
 
     private Integer page;
 
+    @JsonProperty("page_size")
+    private Integer pageSize;
+
     private Integer limit;
 
     private Integer total;

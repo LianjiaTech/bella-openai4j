@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * A file uploaded to OpenAi
@@ -103,7 +102,7 @@ public class File {
     @JsonProperty("source_file")
     File sourceFile;
 
-    Map<String, Object> metadata;
+    String metadata;
 
     String path;
 

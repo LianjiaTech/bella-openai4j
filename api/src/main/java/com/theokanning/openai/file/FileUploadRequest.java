@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.Map;
 
 @Data
 @Builder
@@ -17,7 +16,7 @@ public class FileUploadRequest {
 
     private String purpose;
 
-    private Map<String, Object> metadata;
+    private String metadata;
 
     @JsonProperty("get_url")
     private Boolean getUrl;
