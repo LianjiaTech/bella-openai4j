@@ -568,5 +568,47 @@ public interface OpenAiApi {
      */
     @GET("responses/{response_id}")
     Single<com.theokanning.openai.response.Response> getResponse(@Path("response_id") String responseId);
+
+    // Space API operations
+
+    @POST("space/create")
+    Single<com.theokanning.openai.BellaResponse<String>> createSpace(@Body com.theokanning.openai.space.CreateSpaceRequest request);
+
+    @POST("space/name/update")
+    Single<com.theokanning.openai.BellaResponse<Boolean>> updateSpaceName(@Body com.theokanning.openai.space.UpdateSpaceNameRequest request);
+
+    @GET("space/get")
+    Single<com.theokanning.openai.BellaResponse<com.theokanning.openai.space.Space>> getSpace(@Query("spaceCode") String spaceCode);
+
+    @GET("space/list")
+    Single<com.theokanning.openai.BellaResponse<java.util.List<com.theokanning.openai.space.Space>>> listSpaces(@Query("spaceCodes") java.util.List<String> spaceCodes);
+
+    @POST("space/owner/change")
+    Single<com.theokanning.openai.BellaResponse<Boolean>> changeSpaceOwner(@Body com.theokanning.openai.space.ChangeSpaceOwnerRequest request);
+
+    @POST("space/role/create")
+    Single<com.theokanning.openai.BellaResponse<Boolean>> createRole(@Body com.theokanning.openai.space.CreateRoleRequest request);
+
+    @GET("space/role/list")
+    Single<com.theokanning.openai.BellaResponse<java.util.List<com.theokanning.openai.space.RoleWithSpace>>> listMemberRoles(@Query("memberUid") String memberUid);
+
+    @POST("space/member/create")
+    Single<com.theokanning.openai.BellaResponse<Boolean>> createMembers(@Body com.theokanning.openai.space.CreateMemberRequest request);
+
+    @POST("space/member/remove")
+    Single<com.theokanning.openai.BellaResponse<Boolean>> removeMember(@Body com.theokanning.openai.space.RemoveMemberRequest request);
+
+    @POST("space/member/update")
+    Single<com.theokanning.openai.BellaResponse<Boolean>> updateMemberRole(@Body com.theokanning.openai.space.UpdateMemberRoleRequest request);
+
+    @POST("space/member/exit")
+    Single<com.theokanning.openai.BellaResponse<Boolean>> exitSpace(@Body com.theokanning.openai.space.ExitSpaceRequest request);
+
+    @GET("space/member/list")
+    Single<com.theokanning.openai.BellaResponse<java.util.List<com.theokanning.openai.space.Member>>> listMembers(@Query("spaceCode") String spaceCode);
+
+    @GET("space/member/role")
+    Single<com.theokanning.openai.BellaResponse<com.theokanning.openai.space.RoleWithSpace>> getMemberRole(@Query("memberUid") String memberUid,
+                                                                                                           @Query("spaceCode") String spaceCode);
 }
 

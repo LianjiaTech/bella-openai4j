@@ -1042,6 +1042,71 @@ public class OpenAiService {
         return subscription.blockingGet();
     }
 
+    // Space operations
+
+    private static boolean bellaSuccess(com.theokanning.openai.BellaResponse<Boolean> resp) {
+        if (resp.getData() != null) {
+            return resp.getData();
+        }
+        return resp.getCode() == 200;
+    }
+
+    public String createSpace(com.theokanning.openai.space.CreateSpaceRequest request) {
+        return execute(api.createSpace(request)).getData();
+    }
+
+    public com.theokanning.openai.BellaResponse<String> createSpaceRaw(com.theokanning.openai.space.CreateSpaceRequest request) {
+        return execute(api.createSpace(request));
+    }
+
+    public boolean updateSpaceName(com.theokanning.openai.space.UpdateSpaceNameRequest request) {
+        return bellaSuccess(execute(api.updateSpaceName(request)));
+    }
+
+    public com.theokanning.openai.space.Space getSpace(String spaceCode) {
+        return execute(api.getSpace(spaceCode)).getData();
+    }
+
+    public java.util.List<com.theokanning.openai.space.Space> listSpaces(java.util.List<String> spaceCodes) {
+        return execute(api.listSpaces(spaceCodes)).getData();
+    }
+
+    public boolean changeSpaceOwner(com.theokanning.openai.space.ChangeSpaceOwnerRequest request) {
+        return bellaSuccess(execute(api.changeSpaceOwner(request)));
+    }
+
+    public boolean createRole(com.theokanning.openai.space.CreateRoleRequest request) {
+        return bellaSuccess(execute(api.createRole(request)));
+    }
+
+    public java.util.List<com.theokanning.openai.space.RoleWithSpace> listMemberRoles(String memberUid) {
+        return execute(api.listMemberRoles(memberUid)).getData();
+    }
+
+    public boolean createMembers(com.theokanning.openai.space.CreateMemberRequest request) {
+        return bellaSuccess(execute(api.createMembers(request)));
+    }
+
+    public boolean removeMember(com.theokanning.openai.space.RemoveMemberRequest request) {
+        return bellaSuccess(execute(api.removeMember(request)));
+    }
+
+    public boolean updateMemberRole(com.theokanning.openai.space.UpdateMemberRoleRequest request) {
+        return bellaSuccess(execute(api.updateMemberRole(request)));
+    }
+
+    public boolean exitSpace(com.theokanning.openai.space.ExitSpaceRequest request) {
+        return bellaSuccess(execute(api.exitSpace(request)));
+    }
+
+    public java.util.List<com.theokanning.openai.space.Member> listMembers(String spaceCode) {
+        return execute(api.listMembers(spaceCode)).getData();
+    }
+
+    public com.theokanning.openai.space.RoleWithSpace getMemberRole(String memberUid, String spaceCode) {
+        return execute(api.getMemberRole(memberUid, spaceCode)).getData();
+    }
+
     /**
      * Calls the Open AI api, returns the response, and parses error messages if the request fails
      */

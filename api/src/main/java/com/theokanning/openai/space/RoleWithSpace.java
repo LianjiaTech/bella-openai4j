@@ -1,0 +1,19 @@
+package com.theokanning.openai.space;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class RoleWithSpace {
+
+    private String roleCode;
+
+    private String spaceCode;
+
+    private String spaceName;
+}
