@@ -58,9 +58,7 @@ import com.theokanning.openai.completion.chat.ChatFunctionCall;
 import com.theokanning.openai.completion.chat.ChatToolCall;
 import com.theokanning.openai.embedding.EmbeddingRequest;
 import com.theokanning.openai.embedding.EmbeddingResult;
-import com.theokanning.openai.file.File;
-import com.theokanning.openai.file.FileListRequest;
-import com.theokanning.openai.file.FileUrl;
+import com.theokanning.openai.file.*;
 import com.theokanning.openai.fine_tuning.FineTuningEvent;
 import com.theokanning.openai.fine_tuning.FineTuningJob;
 import com.theokanning.openai.fine_tuning.FineTuningJobCheckpoint;
@@ -270,6 +268,12 @@ public class OpenAiService {
         return execute(api.listFiles()).data;
     }
 
+    public List<File> listFiles(FileListQuery query) {
+        Map<String, Object> queryMap = mapper.convertValue(query, new TypeReference<Map<String, Object>>() {});
+        queryMap.values().removeIf(Objects::isNull);
+        return execute(api.listFiles(queryMap)).data;
+    }
+
     public List<File> listFiles(FileListRequest request) {
         return execute(api.listFiles(request));
     }
@@ -280,6 +284,36 @@ public class OpenAiService {
 
     public File retrieveFile(String fileId) {
         return execute(api.retrieveFile(fileId));
+    }
+
+    public File retrieveFile(String fileId, Boolean getUrl, Long expires) {
+        return execute(api.retrieveFile(fileId, getUrl, expires));
+    }
+
+    public File renameFile(String fileId, String filename) {
+        return execute(api.renameFile(fileId, filename));
+    }
+
+    public File updateFileContent(String fileId, byte[] bytes, String filename) {
+        RequestBody fileIdBody = RequestBody.create(MultipartBody.FORM, fileId);
+        RequestBody fileBody = RequestBody.create(FileUtils.extraMediaType(filename), bytes);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("file", filename, fileBody);
+        return execute(api.updateFileContent(fileIdBody, body));
+    }
+
+    public File updateFileContent(String fileId, Path filepath) {
+        try (InputStream inputStream = Files.newInputStream(filepath)) {
+            return updateFileContent(fileId, inputStream, filepath.getFileName().toString());
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to update file content: " + filepath, e);
+        }
+    }
+
+    public File updateFileContent(String fileId, InputStream inputStream, String filename) {
+        RequestBody fileIdBody = RequestBody.create(MultipartBody.FORM, fileId);
+        RequestBody fileBody = createStreamRequestBody(inputStream, filename);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("file", filename, fileBody);
+        return execute(api.updateFileContent(fileIdBody, body));
     }
 
     public ResponseBody retrieveFileContent(String fileId) {
@@ -303,12 +337,145 @@ public class OpenAiService {
         }
     }
 
+    public FileUrl retrieveFileUrl(String fileId) {
+        return execute(api.retrieveFileUrl(fileId));
+    }
+
+    public FileUrl retrieveFileUrl(String fileId, Long expires) {
+        return execute(api.retrieveFileUrl(fileId, expires));
+    }
+
+    public FileUrl retrievePreviewUrl(String fileId, Long expires) {
+        return execute(api.retrievePreviewUrl(fileId, expires));
+    }
+
     public ResponseBody retrieveDomTreeContent(String fileId) {
         return execute(api.retrieveDomTreeContent(fileId));
     }
 
-    public FileUrl retrieveFileUrl(String fileId) {
-        return execute(api.retrieveFileUrl(fileId));
+    public FileUrl retrieveDomTreeUrl(String fileId, Long expires) {
+        return execute(api.retrieveDomTreeUrl(fileId, expires));
+    }
+
+    public File uploadDomTree(String fileId, byte[] bytes, String filename) {
+        RequestBody fileIdBody = RequestBody.create(MultipartBody.FORM, fileId);
+        RequestBody fileBody = RequestBody.create(FileUtils.extraMediaType(filename), bytes);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("file", filename, fileBody);
+        return execute(api.uploadDomTree(fileIdBody, body));
+    }
+
+    public File uploadDomTree(String fileId, Path filepath) {
+        try (InputStream inputStream = Files.newInputStream(filepath)) {
+            return uploadDomTree(fileId, inputStream, filepath.getFileName().toString());
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to upload dom tree: " + filepath, e);
+        }
+    }
+
+    public File uploadDomTree(String fileId, InputStream inputStream, String filename) {
+        RequestBody fileIdBody = RequestBody.create(MultipartBody.FORM, fileId);
+        RequestBody fileBody = createStreamRequestBody(inputStream, filename);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("file", filename, fileBody);
+        return execute(api.uploadDomTree(fileIdBody, body));
+    }
+
+    public File uploadDomTreeJson(String fileId, Object domTree) {
+        DomTreeJsonRequest request = DomTreeJsonRequest.builder()
+                .fileId(fileId)
+                .domTree(domTree)
+                .build();
+        return execute(api.uploadDomTreeJson(request));
+    }
+
+    public File uploadPdf(String fileId, byte[] bytes, String filename) {
+        RequestBody fileIdBody = RequestBody.create(MultipartBody.FORM, fileId);
+        RequestBody fileBody = RequestBody.create(FileUtils.extraMediaType(filename), bytes);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("file", filename, fileBody);
+        return execute(api.uploadPdf(fileIdBody, body));
+    }
+
+    public File uploadPdf(String fileId, Path filepath) {
+        try (InputStream inputStream = Files.newInputStream(filepath)) {
+            return uploadPdf(fileId, inputStream, filepath.getFileName().toString());
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to upload pdf: " + filepath, e);
+        }
+    }
+
+    public File uploadPdf(String fileId, InputStream inputStream, String filename) {
+        RequestBody fileIdBody = RequestBody.create(MultipartBody.FORM, fileId);
+        RequestBody fileBody = createStreamRequestBody(inputStream, filename);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("file", filename, fileBody);
+        return execute(api.uploadPdf(fileIdBody, body));
+    }
+
+    public Progress updateProgress(String fileId, String progressName, ProgressUpdateRequest request) {
+        return execute(api.updateProgress(fileId, progressName, request));
+    }
+
+    public Progress retrieveProgress(String fileId, String progressName) {
+        return execute(api.retrieveProgress(fileId, progressName));
+    }
+
+    public FileCropResponse cropImage(FileCropRequest request) {
+        return execute(api.cropImage(request));
+    }
+
+    public File createDirectory(MkdirRequest request) {
+        return execute(api.createDirectory(request));
+    }
+
+    public File createResource(CreateResourceRequest request) {
+        return execute(api.createResource(request));
+    }
+
+    public List<File> findFiles(FindFilesQuery query) {
+        Map<String, Object> queryMap = mapper.convertValue(query, new TypeReference<Map<String, Object>>() {});
+        queryMap.values().removeIf(Objects::isNull);
+        return execute(api.findFiles(queryMap));
+    }
+
+    public File retrieveFileInfo(String fileId) {
+        return execute(api.retrieveFileInfo(fileId));
+    }
+
+    public File updateFileDescription(String fileId, String description) {
+        FileDescriptionUpdateRequest request = FileDescriptionUpdateRequest.builder()
+                .description(description)
+                .build();
+        return execute(api.updateFileDescription(fileId, request));
+    }
+
+    public File updateFileCities(String fileId, List<String> cities) {
+        FileCitiesUpdateRequest request = FileCitiesUpdateRequest.builder()
+                .cities(cities)
+                .build();
+        return execute(api.updateFileCities(fileId, request));
+    }
+
+    public File updateFileTags(String fileId, List<String> tags) {
+        FileTagsUpdateRequest request = FileTagsUpdateRequest.builder()
+                .tags(tags)
+                .build();
+        return execute(api.updateFileTags(fileId, request));
+    }
+
+    public FileExistsResponse fileExists(FileExistsQuery query) {
+        Map<String, Object> queryMap = mapper.convertValue(query, new TypeReference<Map<String, Object>>() {});
+        queryMap.values().removeIf(Objects::isNull);
+        return execute(api.fileExists(queryMap));
+    }
+
+    public File moveFile(FileMoveRequest request) {
+        return execute(api.moveFile(request));
+    }
+
+    public FilePage pageFiles(PageFilesRequest request) {
+        return execute(api.pageFiles(request));
+    }
+
+    public Map<String, List<String>> getFileAncestorIds(FileAncestorIdsRequest request) {
+        return execute(api.getFileAncestorIds(request));
     }
 
     public FineTuningJob createFineTuningJob(FineTuningJobRequest request) {
@@ -394,6 +561,82 @@ public class OpenAiService {
         return execute(api.uploadFile(purposeBody, body));
     }
 
+    public File uploadFile(FileUploadRequest request, byte[] bytes, String filename) {
+        MultipartBody.Part filePart = MultipartBody.Part.createFormData("file", filename,
+                RequestBody.create(FileUtils.extraMediaType(filename), bytes));
+        return executeUploadFile(request, filePart);
+    }
+
+    public File uploadFile(FileUploadRequest request, Path filepath) {
+        try (InputStream inputStream = Files.newInputStream(filepath)) {
+            return uploadFile(request, inputStream, filepath.getFileName().toString());
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to upload file: " + filepath, e);
+        }
+    }
+
+    public File uploadFile(FileUploadRequest request, InputStream inputStream, String filename) {
+        MultipartBody.Part filePart = MultipartBody.Part.createFormData("file", filename,
+                createStreamRequestBody(inputStream, filename));
+        return executeUploadFile(request, filePart);
+    }
+
+    private File executeUploadFile(FileUploadRequest request, MultipartBody.Part filePart) {
+        RequestBody purposeBody = request.getPurpose() != null
+                ? RequestBody.create(MultipartBody.FORM, request.getPurpose()) : null;
+        RequestBody metadataBody = null;
+        if (request.getMetadata() != null) {
+            try {
+                metadataBody = RequestBody.create(MultipartBody.FORM, mapper.writeValueAsString(request.getMetadata()));
+            } catch (JsonProcessingException e) {
+                throw new IllegalStateException("Failed to serialize metadata", e);
+            }
+        }
+        RequestBody getUrlBody = request.getGetUrl() != null
+                ? RequestBody.create(MultipartBody.FORM, request.getGetUrl().toString()) : null;
+        RequestBody expiresBody = request.getExpires() != null
+                ? RequestBody.create(MultipartBody.FORM, request.getExpires().toString()) : null;
+        RequestBody ancestorIdBody = request.getAncestorId() != null
+                ? RequestBody.create(MultipartBody.FORM, request.getAncestorId()) : null;
+        RequestBody overwriteBody = request.getOverwrite() != null
+                ? RequestBody.create(MultipartBody.FORM, request.getOverwrite().toString()) : null;
+        RequestBody descriptionBody = request.getDescription() != null
+                ? RequestBody.create(MultipartBody.FORM, request.getDescription()) : null;
+        RequestBody citiesBody = null;
+        if (request.getCities() != null) {
+            try {
+                citiesBody = RequestBody.create(MultipartBody.FORM, mapper.writeValueAsString(request.getCities()));
+            } catch (JsonProcessingException e) {
+                throw new IllegalStateException("Failed to serialize cities", e);
+            }
+        }
+        RequestBody tagsBody = null;
+        if (request.getTags() != null) {
+            try {
+                tagsBody = RequestBody.create(MultipartBody.FORM, mapper.writeValueAsString(request.getTags()));
+            } catch (JsonProcessingException e) {
+                throw new IllegalStateException("Failed to serialize tags", e);
+            }
+        }
+        return execute(api.uploadFile(purposeBody, filePart, metadataBody, getUrlBody, expiresBody,
+                ancestorIdBody, overwriteBody, descriptionBody, citiesBody, tagsBody));
+    }
+
+    private RequestBody createStreamRequestBody(InputStream inputStream, String filename) {
+        return new RequestBody() {
+            @Override
+            public MediaType contentType() {
+                return FileUtils.extraMediaType(filename);
+            }
+
+            @Override
+            public void writeTo(BufferedSink sink) throws IOException {
+                try (Source source = Okio.source(inputStream)) {
+                    sink.writeAll(source);
+                }
+            }
+        };
+    }
 
     public Batch createBatch(BatchRequest request) {
         return execute(api.createBatch(request));

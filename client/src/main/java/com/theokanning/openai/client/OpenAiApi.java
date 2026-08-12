@@ -32,9 +32,7 @@ import com.theokanning.openai.completion.chat.ChatCompletionRequest;
 import com.theokanning.openai.completion.chat.ChatCompletionResult;
 import com.theokanning.openai.embedding.EmbeddingRequest;
 import com.theokanning.openai.embedding.EmbeddingResult;
-import com.theokanning.openai.file.File;
-import com.theokanning.openai.file.FileListRequest;
-import com.theokanning.openai.file.FileUrl;
+import com.theokanning.openai.file.*;
 import com.theokanning.openai.fine_tuning.FineTuningEvent;
 import com.theokanning.openai.fine_tuning.FineTuningJob;
 import com.theokanning.openai.fine_tuning.FineTuningJobCheckpoint;
@@ -96,15 +94,37 @@ public interface OpenAiApi {
     Single<EmbeddingResult> createEmbeddings(@Body EmbeddingRequest request);
 
 
+    // --- File upload ---
+
     @Multipart
     @POST("files")
     Single<File> uploadFile(@Part("purpose") RequestBody purpose, @Part MultipartBody.Part file);
 
+    @Multipart
+    @POST("files")
+    Single<File> uploadFile(@Part("purpose") RequestBody purpose,
+                            @Part MultipartBody.Part file,
+                            @Part("metadata") RequestBody metadata,
+                            @Part("get_url") RequestBody getUrl,
+                            @Part("expires") RequestBody expires,
+                            @Part("ancestor_id") RequestBody ancestorId,
+                            @Part("overwrite") RequestBody overwrite,
+                            @Part("description") RequestBody description,
+                            @Part("cities") RequestBody cities,
+                            @Part("tags") RequestBody tags);
+
+    // --- File list ---
+
     @GET("files")
     Single<OpenAiResponse<File>> listFiles();
 
+    @GET("files")
+    Single<OpenAiResponse<File>> listFiles(@QueryMap Map<String, Object> queryMap);
+
     @POST("files/list")
     Single<List<File>> listFiles(@Body FileListRequest request);
+
+    // --- File CRUD ---
 
     @DELETE("files/{file_id}")
     Single<DeleteResult> deleteFile(@Path("file_id") String fileId);
@@ -112,16 +132,114 @@ public interface OpenAiApi {
     @GET("files/{file_id}")
     Single<File> retrieveFile(@Path("file_id") String fileId);
 
+    @GET("files/{file_id}")
+    Single<File> retrieveFile(@Path("file_id") String fileId,
+                              @Query("get_url") Boolean getUrl,
+                              @Query("expires") Long expires);
+
+    @POST("files/{file_id}/rename")
+    Single<File> renameFile(@Path("file_id") String fileId, @Query("filename") String filename);
+
+    @Multipart
+    @PUT("files")
+    Single<File> updateFileContent(@Part("file_id") RequestBody fileId, @Part MultipartBody.Part file);
+
+    // --- File content & URL ---
+
     @Streaming
     @GET("files/{file_id}/content")
     Single<ResponseBody> retrieveFileContent(@Path("file_id") String fileId);
+
+    @GET("files/{file_id}/url")
+    Single<FileUrl> retrieveFileUrl(@Path("file_id") String fileId);
+
+    @GET("files/{file_id}/url")
+    Single<FileUrl> retrieveFileUrl(@Path("file_id") String fileId, @Query("expires") Long expires);
+
+    @GET("files/{file_id}/preview_url")
+    Single<FileUrl> retrievePreviewUrl(@Path("file_id") String fileId, @Query("expires") Long expires);
+
+    // --- DOM Tree ---
 
     @Streaming
     @GET("files/{file_id}/dom-tree/content")
     Single<ResponseBody> retrieveDomTreeContent(@Path("file_id") String fileId);
 
-    @GET("files/{file_id}/url")
-    Single<FileUrl> retrieveFileUrl(@Path("file_id") String fileId);
+    @GET("files/{file_id}/dom-tree/url")
+    Single<FileUrl> retrieveDomTreeUrl(@Path("file_id") String fileId, @Query("expires") Long expires);
+
+    @Multipart
+    @POST("files/dom-tree")
+    Single<File> uploadDomTree(@Part("file_id") RequestBody fileId, @Part MultipartBody.Part file);
+
+    @POST("files/dom-tree/json")
+    Single<File> uploadDomTreeJson(@Body DomTreeJsonRequest request);
+
+    // --- PDF ---
+
+    @Multipart
+    @POST("files/pdf")
+    Single<File> uploadPdf(@Part("file_id") RequestBody fileId, @Part MultipartBody.Part file);
+
+    // --- Progress ---
+
+    @POST("files/{file_id}/progress/{progress_name}")
+    Single<Progress> updateProgress(@Path("file_id") String fileId,
+                                    @Path("progress_name") String progressName,
+                                    @Body ProgressUpdateRequest request);
+
+    @GET("files/{file_id}/progress")
+    Single<Progress> retrieveProgress(@Path("file_id") String fileId,
+                                      @Query("progress_name") String progressName);
+
+    // --- Crop image ---
+
+    @POST("files/crop-image")
+    Single<FileCropResponse> cropImage(@Body FileCropRequest request);
+
+    // --- Directory & Resource ---
+
+    @POST("files/mkdir")
+    Single<File> createDirectory(@Body MkdirRequest request);
+
+    @POST("files/resources")
+    Single<File> createResource(@Body CreateResourceRequest request);
+
+    // --- Find & Info ---
+
+    @GET("files/find")
+    Single<List<File>> findFiles(@QueryMap Map<String, Object> queryMap);
+
+    @GET("files/{file_id}/info")
+    Single<File> retrieveFileInfo(@Path("file_id") String fileId);
+
+    // --- Update metadata ---
+
+    @PUT("files/{file_id}/description")
+    Single<File> updateFileDescription(@Path("file_id") String fileId,
+                                       @Body FileDescriptionUpdateRequest request);
+
+    @PUT("files/{file_id}/cities")
+    Single<File> updateFileCities(@Path("file_id") String fileId,
+                                  @Body FileCitiesUpdateRequest request);
+
+    @PUT("files/{file_id}/tags")
+    Single<File> updateFileTags(@Path("file_id") String fileId,
+                                @Body FileTagsUpdateRequest request);
+
+    // --- Exists, Move, Page, Ancestor IDs ---
+
+    @GET("files/exists")
+    Single<FileExistsResponse> fileExists(@QueryMap Map<String, Object> queryMap);
+
+    @POST("files/move")
+    Single<File> moveFile(@Body FileMoveRequest request);
+
+    @POST("files/page")
+    Single<FilePage> pageFiles(@Body PageFilesRequest request);
+
+    @POST("files/ancestor-ids")
+    Single<Map<String, List<String>>> getFileAncestorIds(@Body FileAncestorIdsRequest request);
 
     @POST("fine_tuning/jobs")
     Single<FineTuningJob> createFineTuningJob(@Body FineTuningJobRequest request);
