@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * A file uploaded to OpenAi
  * <p>
@@ -76,7 +79,7 @@ public class File {
     String domTreeFileId;
     @JsonProperty("pdf_file_id")
     String pdfFileId;
-    Integer version;
+    Long version;
     @JsonProperty("space_code")
     String spaceCode;
     Long cuid;
@@ -88,4 +91,23 @@ public class File {
     String muName;
     Long mtime;
     String description;
+
+    @JsonProperty("node_type")
+    String nodeType;
+
+    @JsonProperty("resource_id")
+    String resourceId;
+
+    Boolean deleted;
+
+    @JsonProperty("source_file")
+    File sourceFile;
+
+    Map<String, Object> metadata;
+
+    String path;
+
+    List<String> cities;
+
+    List<String> tags;
 }
