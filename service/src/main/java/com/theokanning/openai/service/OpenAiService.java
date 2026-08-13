@@ -268,10 +268,14 @@ public class OpenAiService {
         return execute(api.listFiles()).data;
     }
 
+    public List<File> listFiles(String spaceCode) {
+        return execute(api.listFiles(spaceCode)).data;
+    }
+
     public List<File> listFiles(FileListQuery query) {
         Map<String, Object> queryMap = mapper.convertValue(query, new TypeReference<Map<String, Object>>() {});
         queryMap.values().removeIf(Objects::isNull);
-        return execute(api.listFiles(queryMap)).data;
+        return execute(api.listFiles(query.getSpaceCode(), queryMap)).data;
     }
 
     public List<File> listFiles(FileListRequest request) {
@@ -291,7 +295,11 @@ public class OpenAiService {
     }
 
     public File renameFile(String fileId, String filename) {
-        return execute(api.renameFile(fileId, filename));
+        return execute(api.renameFile(null, fileId, filename));
+    }
+
+    public File renameFile(String fileId, String filename, String spaceCode) {
+        return execute(api.renameFile(spaceCode, fileId, filename));
     }
 
     public File updateFileContent(String fileId, byte[] bytes, String filename) {
@@ -358,55 +366,83 @@ public class OpenAiService {
     }
 
     public File uploadDomTree(String fileId, byte[] bytes, String filename) {
+        return uploadDomTree(fileId, bytes, filename, null);
+    }
+
+    public File uploadDomTree(String fileId, byte[] bytes, String filename, String spaceCode) {
         RequestBody fileIdBody = RequestBody.create(MultipartBody.FORM, fileId);
         RequestBody fileBody = RequestBody.create(FileUtils.extraMediaType(filename), bytes);
         MultipartBody.Part body = MultipartBody.Part.createFormData("file", filename, fileBody);
-        return execute(api.uploadDomTree(fileIdBody, body));
+        return execute(api.uploadDomTree(spaceCode, fileIdBody, body));
     }
 
     public File uploadDomTree(String fileId, Path filepath) {
+        return uploadDomTree(fileId, filepath, null);
+    }
+
+    public File uploadDomTree(String fileId, Path filepath, String spaceCode) {
         try (InputStream inputStream = Files.newInputStream(filepath)) {
-            return uploadDomTree(fileId, inputStream, filepath.getFileName().toString());
+            return uploadDomTree(fileId, inputStream, filepath.getFileName().toString(), spaceCode);
         } catch (IOException e) {
             throw new IllegalStateException("Failed to upload dom tree: " + filepath, e);
         }
     }
 
     public File uploadDomTree(String fileId, InputStream inputStream, String filename) {
+        return uploadDomTree(fileId, inputStream, filename, null);
+    }
+
+    public File uploadDomTree(String fileId, InputStream inputStream, String filename, String spaceCode) {
         RequestBody fileIdBody = RequestBody.create(MultipartBody.FORM, fileId);
         RequestBody fileBody = createStreamRequestBody(inputStream, filename);
         MultipartBody.Part body = MultipartBody.Part.createFormData("file", filename, fileBody);
-        return execute(api.uploadDomTree(fileIdBody, body));
+        return execute(api.uploadDomTree(spaceCode, fileIdBody, body));
     }
 
     public File uploadDomTreeJson(String fileId, Object domTree) {
+        return uploadDomTreeJson(fileId, domTree, null);
+    }
+
+    public File uploadDomTreeJson(String fileId, Object domTree, String spaceCode) {
         DomTreeJsonRequest request = DomTreeJsonRequest.builder()
                 .fileId(fileId)
                 .domTree(domTree)
                 .build();
-        return execute(api.uploadDomTreeJson(request));
+        return execute(api.uploadDomTreeJson(spaceCode, request));
     }
 
     public File uploadPdf(String fileId, byte[] bytes, String filename) {
+        return uploadPdf(fileId, bytes, filename, null);
+    }
+
+    public File uploadPdf(String fileId, byte[] bytes, String filename, String spaceCode) {
         RequestBody fileIdBody = RequestBody.create(MultipartBody.FORM, fileId);
         RequestBody fileBody = RequestBody.create(FileUtils.extraMediaType(filename), bytes);
         MultipartBody.Part body = MultipartBody.Part.createFormData("file", filename, fileBody);
-        return execute(api.uploadPdf(fileIdBody, body));
+        return execute(api.uploadPdf(spaceCode, fileIdBody, body));
     }
 
     public File uploadPdf(String fileId, Path filepath) {
+        return uploadPdf(fileId, filepath, null);
+    }
+
+    public File uploadPdf(String fileId, Path filepath, String spaceCode) {
         try (InputStream inputStream = Files.newInputStream(filepath)) {
-            return uploadPdf(fileId, inputStream, filepath.getFileName().toString());
+            return uploadPdf(fileId, inputStream, filepath.getFileName().toString(), spaceCode);
         } catch (IOException e) {
             throw new IllegalStateException("Failed to upload pdf: " + filepath, e);
         }
     }
 
     public File uploadPdf(String fileId, InputStream inputStream, String filename) {
+        return uploadPdf(fileId, inputStream, filename, null);
+    }
+
+    public File uploadPdf(String fileId, InputStream inputStream, String filename, String spaceCode) {
         RequestBody fileIdBody = RequestBody.create(MultipartBody.FORM, fileId);
         RequestBody fileBody = createStreamRequestBody(inputStream, filename);
         MultipartBody.Part body = MultipartBody.Part.createFormData("file", filename, fileBody);
-        return execute(api.uploadPdf(fileIdBody, body));
+        return execute(api.uploadPdf(spaceCode, fileIdBody, body));
     }
 
     public Progress updateProgress(String fileId, String progressName, ProgressUpdateRequest request) {
@@ -422,11 +458,11 @@ public class OpenAiService {
     }
 
     public File createDirectory(MkdirRequest request) {
-        return execute(api.createDirectory(request));
+        return execute(api.createDirectory(request.getSpaceCode(), request));
     }
 
     public File createResource(CreateResourceRequest request) {
-        return execute(api.createResource(request));
+        return execute(api.createResource(request.getSpaceCode(), request));
     }
 
     public List<File> findFiles(FindFilesQuery query) {
@@ -467,7 +503,7 @@ public class OpenAiService {
     }
 
     public File moveFile(FileMoveRequest request) {
-        return execute(api.moveFile(request));
+        return execute(api.moveFile(request.getSpaceCode(), request));
     }
 
     public FilePage pageFiles(PageFilesRequest request) {
@@ -512,10 +548,17 @@ public class OpenAiService {
      * Upload a file using bytes.
      */
     public File uploadFile(String purpose, byte[] bytes, String filename) {
+        return uploadFile(purpose, bytes, filename, null);
+    }
+
+    /**
+     * Upload a file using bytes and an explicit space.
+     */
+    public File uploadFile(String purpose, byte[] bytes, String filename, String spaceCode) {
         RequestBody purposeBody = RequestBody.create(MultipartBody.FORM, purpose);
         RequestBody fileBody = RequestBody.create(FileUtils.extraMediaType(filename), bytes);
         MultipartBody.Part body = MultipartBody.Part.createFormData("file", filename, fileBody);
-        return execute(api.uploadFile(purposeBody, body));
+        return execute(api.uploadFile(spaceCode, purposeBody, body));
     }
 
     /**
@@ -527,12 +570,27 @@ public class OpenAiService {
     }
 
     /**
+     * Upload a file using file path and an explicit space.
+     */
+    public File uploadFile(String purpose, String filepath, String spaceCode) {
+        Path path = Paths.get(filepath);
+        return uploadFile(purpose, path, spaceCode);
+    }
+
+    /**
      * Upload a file using file path.
      */
     public File uploadFile(String purpose, Path filepath) {
+        return uploadFile(purpose, filepath, null);
+    }
+
+    /**
+     * Upload a file using file path and an explicit space.
+     */
+    public File uploadFile(String purpose, Path filepath, String spaceCode) {
 
         try (InputStream inputStream = Files.newInputStream(filepath)) {
-            return uploadFile(purpose, inputStream, filepath.getFileName().toString());
+            return uploadFile(purpose, inputStream, filepath.getFileName().toString(), spaceCode);
         } catch (IOException e) {
             throw new IllegalStateException("Failed to upload file: " + filepath, e);
         }
@@ -542,6 +600,13 @@ public class OpenAiService {
      * Upload a file using InputStream.
      */
     public File uploadFile(String purpose, InputStream fileInputStream, String filename) {
+        return uploadFile(purpose, fileInputStream, filename, null);
+    }
+
+    /**
+     * Upload a file using InputStream and an explicit space.
+     */
+    public File uploadFile(String purpose, InputStream fileInputStream, String filename, String spaceCode) {
         RequestBody purposeBody = RequestBody.create(MultipartBody.FORM, purpose);
         RequestBody fileBody = new RequestBody() {
             @Override
@@ -558,7 +623,7 @@ public class OpenAiService {
         };
 
         MultipartBody.Part body = MultipartBody.Part.createFormData("file", filename, fileBody);
-        return execute(api.uploadFile(purposeBody, body));
+        return execute(api.uploadFile(spaceCode, purposeBody, body));
     }
 
     public File uploadFile(FileUploadRequest request, byte[] bytes, String filename) {
@@ -612,7 +677,7 @@ public class OpenAiService {
                 throw new IllegalStateException("Failed to serialize tags", e);
             }
         }
-        return execute(api.uploadFile(purposeBody, filePart, metadataBody, getUrlBody, expiresBody,
+        return execute(api.uploadFile(request.getSpaceCode(), purposeBody, filePart, metadataBody, getUrlBody, expiresBody,
                 ancestorIdBody, overwriteBody, descriptionBody, citiesBody, tagsBody));
     }
 

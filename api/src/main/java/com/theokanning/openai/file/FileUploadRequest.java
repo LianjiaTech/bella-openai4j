@@ -1,6 +1,7 @@
 package com.theokanning.openai.file;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +14,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FileUploadRequest {
+
+    /**
+     * 文件所属空间，仅用于生成 X-BELLA-SPACE-CODE 请求头。
+     */
+    @JsonIgnore
+    private String spaceCode;
 
     private String purpose;
 

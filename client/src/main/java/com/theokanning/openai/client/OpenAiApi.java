@@ -98,11 +98,32 @@ public interface OpenAiApi {
 
     @Multipart
     @POST("files")
-    Single<File> uploadFile(@Part("purpose") RequestBody purpose, @Part MultipartBody.Part file);
+    Single<File> uploadFile(@Part("purpose") RequestBody purpose,
+                            @Part MultipartBody.Part file);
+
+    @Multipart
+    @POST("files")
+    Single<File> uploadFile(@Header("X-BELLA-SPACE-CODE") String spaceCode,
+                            @Part("purpose") RequestBody purpose,
+                            @Part MultipartBody.Part file);
 
     @Multipart
     @POST("files")
     Single<File> uploadFile(@Part("purpose") RequestBody purpose,
+                            @Part MultipartBody.Part file,
+                            @Part("metadata") RequestBody metadata,
+                            @Part("get_url") RequestBody getUrl,
+                            @Part("expires") RequestBody expires,
+                            @Part("ancestor_id") RequestBody ancestorId,
+                            @Part("overwrite") RequestBody overwrite,
+                            @Part("description") RequestBody description,
+                            @Part("cities") RequestBody cities,
+                            @Part("tags") RequestBody tags);
+
+    @Multipart
+    @POST("files")
+    Single<File> uploadFile(@Header("X-BELLA-SPACE-CODE") String spaceCode,
+                            @Part("purpose") RequestBody purpose,
                             @Part MultipartBody.Part file,
                             @Part("metadata") RequestBody metadata,
                             @Part("get_url") RequestBody getUrl,
@@ -119,7 +140,14 @@ public interface OpenAiApi {
     Single<OpenAiResponse<File>> listFiles();
 
     @GET("files")
+    Single<OpenAiResponse<File>> listFiles(@Header("X-BELLA-SPACE-CODE") String spaceCode);
+
+    @GET("files")
     Single<OpenAiResponse<File>> listFiles(@QueryMap Map<String, Object> queryMap);
+
+    @GET("files")
+    Single<OpenAiResponse<File>> listFiles(@Header("X-BELLA-SPACE-CODE") String spaceCode,
+                                           @QueryMap Map<String, Object> queryMap);
 
     @POST("files/list")
     Single<List<File>> listFiles(@Body FileListRequest request);
@@ -139,6 +167,11 @@ public interface OpenAiApi {
 
     @POST("files/{file_id}/rename")
     Single<File> renameFile(@Path("file_id") String fileId, @Query("filename") String filename);
+
+    @POST("files/{file_id}/rename")
+    Single<File> renameFile(@Header("X-BELLA-SPACE-CODE") String spaceCode,
+                            @Path("file_id") String fileId,
+                            @Query("filename") String filename);
 
     @Multipart
     @PUT("files")
@@ -172,14 +205,30 @@ public interface OpenAiApi {
     @POST("files/dom-tree")
     Single<File> uploadDomTree(@Part("file_id") RequestBody fileId, @Part MultipartBody.Part file);
 
+    @Multipart
+    @POST("files/dom-tree")
+    Single<File> uploadDomTree(@Header("X-BELLA-SPACE-CODE") String spaceCode,
+                               @Part("file_id") RequestBody fileId,
+                               @Part MultipartBody.Part file);
+
     @POST("files/dom-tree/json")
     Single<File> uploadDomTreeJson(@Body DomTreeJsonRequest request);
+
+    @POST("files/dom-tree/json")
+    Single<File> uploadDomTreeJson(@Header("X-BELLA-SPACE-CODE") String spaceCode,
+                                   @Body DomTreeJsonRequest request);
 
     // --- PDF ---
 
     @Multipart
     @POST("files/pdf")
     Single<File> uploadPdf(@Part("file_id") RequestBody fileId, @Part MultipartBody.Part file);
+
+    @Multipart
+    @POST("files/pdf")
+    Single<File> uploadPdf(@Header("X-BELLA-SPACE-CODE") String spaceCode,
+                           @Part("file_id") RequestBody fileId,
+                           @Part MultipartBody.Part file);
 
     // --- Progress ---
 
@@ -202,8 +251,16 @@ public interface OpenAiApi {
     @POST("files/mkdir")
     Single<File> createDirectory(@Body MkdirRequest request);
 
+    @POST("files/mkdir")
+    Single<File> createDirectory(@Header("X-BELLA-SPACE-CODE") String spaceCode,
+                                 @Body MkdirRequest request);
+
     @POST("files/resources")
     Single<File> createResource(@Body CreateResourceRequest request);
+
+    @POST("files/resources")
+    Single<File> createResource(@Header("X-BELLA-SPACE-CODE") String spaceCode,
+                                @Body CreateResourceRequest request);
 
     // --- Find & Info ---
 
@@ -234,6 +291,10 @@ public interface OpenAiApi {
 
     @POST("files/move")
     Single<File> moveFile(@Body FileMoveRequest request);
+
+    @POST("files/move")
+    Single<File> moveFile(@Header("X-BELLA-SPACE-CODE") String spaceCode,
+                          @Body FileMoveRequest request);
 
     @POST("files/page")
     Single<FilePage> pageFiles(@Body PageFilesRequest request);
@@ -611,4 +672,3 @@ public interface OpenAiApi {
     Single<com.theokanning.openai.BellaResponse<com.theokanning.openai.space.RoleWithSpace>> getMemberRole(@Query("memberUid") String memberUid,
                                                                                                            @Query("spaceCode") String spaceCode);
 }
-
