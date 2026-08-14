@@ -1,0 +1,21 @@
+{
+  "id": "upload-abc123",
+  "object": "upload",
+  "filename": "training_examples.jsonl",
+  "purpose": "fine-tune",
+  "bytes": 2147483648,
+  "status": "completed",
+  "created_at": 1719184911,
+  "expires_at": 1719127296,
+  "file": {
+    "id": "file-xyz321",
+    "object": "file",
+    "bytes": 2147483648,
+    "created_at": 1719186911,
+    "filename": "training_examples.jsonl",
+    "purpose": "fine-tune"
+  },
+  "part_size_min": 5242880,
+  "part_size_max": 5368709120,
+  "max_parts": 10000
+}

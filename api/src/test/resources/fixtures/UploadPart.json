@@ -1,0 +1,9 @@
+{
+  "id": "part-def456",
+  "object": "upload.part",
+  "upload_id": "upload-abc123",
+  "created_at": 1719185911,
+  "part_number": 1,
+  "size": 5242880,
+  "etag": "d41d8cd98f00b204e9800998ecf8427e"
+}

@@ -1,0 +1,12 @@
+{
+  "filename": "training_examples.jsonl",
+  "purpose": "fine-tune",
+  "bytes": 2147483648,
+  "mime_type": "text/jsonl",
+  "space_code": "space-001",
+  "ancestor_id": "file-dir123",
+  "metadata": "{\"key\":\"value\"}",
+  "description": "large file upload",
+  "cities": ["beijing"],
+  "tags": ["sdk", "test"]
+}

@@ -41,6 +41,10 @@ import com.theokanning.openai.image.ImageResult;
 import com.theokanning.openai.model.Model;
 import com.theokanning.openai.moderation.ModerationRequest;
 import com.theokanning.openai.moderation.ModerationResult;
+import com.theokanning.openai.upload.CompleteUploadRequest;
+import com.theokanning.openai.upload.CreateUploadRequest;
+import com.theokanning.openai.upload.Upload;
+import com.theokanning.openai.upload.UploadPart;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -71,7 +75,11 @@ public class JsonTest {
             ModerationRequest.class,
             ModerationResult.class,
             BatchRequest.class,
-            Batch.class
+            Batch.class,
+            Upload.class,
+            UploadPart.class,
+            CreateUploadRequest.class,
+            CompleteUploadRequest.class
     })
     void objectMatchesJson(Class<?> clazz) throws IOException {
         ObjectMapper mapper = new ObjectMapper();

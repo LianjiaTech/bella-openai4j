@@ -48,6 +48,10 @@ import com.theokanning.openai.queue.Register;
 import com.theokanning.openai.queue.Put;
 import com.theokanning.openai.queue.Take;
 import com.theokanning.openai.queue.Task;
+import com.theokanning.openai.upload.CompleteUploadRequest;
+import com.theokanning.openai.upload.CreateUploadRequest;
+import com.theokanning.openai.upload.Upload;
+import com.theokanning.openai.upload.UploadPart;
 import com.theokanning.openai.web.WebCrawlRequest;
 import com.theokanning.openai.web.WebCrawlResponse;
 import com.theokanning.openai.web.WebExtractRequest;
@@ -217,6 +221,31 @@ public interface OpenAiApi {
     @POST("files/dom-tree/json")
     Single<File> uploadDomTreeJson(@Header("X-BELLA-SPACE-CODE") String spaceCode,
                                    @Body DomTreeJsonRequest request);
+
+    // --- Uploads (large file multipart upload) ---
+
+    @POST("uploads")
+    Single<Upload> createUpload(@Body CreateUploadRequest request);
+
+    @POST("uploads")
+    Single<Upload> createUpload(@Header("X-BELLA-SPACE-CODE") String spaceCode,
+                                @Body CreateUploadRequest request);
+
+    @Multipart
+    @POST("uploads/{upload_id}/parts")
+    Single<UploadPart> addUploadPart(@Path("upload_id") String uploadId,
+                                     @Part("part_number") RequestBody partNumber,
+                                     @Part MultipartBody.Part data);
+
+    @POST("uploads/{upload_id}/complete")
+    Single<Upload> completeUpload(@Path("upload_id") String uploadId,
+                                  @Body CompleteUploadRequest request);
+
+    @POST("uploads/{upload_id}/cancel")
+    Single<Upload> cancelUpload(@Path("upload_id") String uploadId);
+
+    @GET("uploads/{upload_id}/parts")
+    Single<OpenAiResponse<UploadPart>> listUploadParts(@Path("upload_id") String uploadId);
 
     // --- PDF ---
 

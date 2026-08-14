@@ -76,6 +76,10 @@ import com.theokanning.openai.queue.Queue;
 import com.theokanning.openai.queue.Register;
 import com.theokanning.openai.queue.Take;
 import com.theokanning.openai.queue.Task;
+import com.theokanning.openai.upload.CompleteUploadRequest;
+import com.theokanning.openai.upload.CreateUploadRequest;
+import com.theokanning.openai.upload.Upload;
+import com.theokanning.openai.upload.UploadPart;
 import com.theokanning.openai.service.assistant_stream.AssistantResponseBodyCallback;
 import com.theokanning.openai.service.assistant_stream.AssistantSSE;
 import com.theokanning.openai.service.response_stream.ResponseResponseBodyCallback;
@@ -113,6 +117,7 @@ import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -695,6 +700,142 @@ public class OpenAiService {
                 }
             }
         };
+    }
+
+    /**
+     * Create an Upload object to which byte chunks can be added as Parts.
+     */
+    public Upload createUpload(CreateUploadRequest request) {
+        return execute(api.createUpload(request));
+    }
+
+    /**
+     * Create an Upload object in an explicit space.
+     */
+    public Upload createUpload(String spaceCode, CreateUploadRequest request) {
+        return execute(api.createUpload(spaceCode, request));
+    }
+
+    /**
+     * Add a chunk of bytes to an Upload as a Part.
+     */
+    public UploadPart addUploadPart(String uploadId, int partNumber, byte[] data) {
+        RequestBody partNumberBody = RequestBody.create(MultipartBody.FORM, String.valueOf(partNumber));
+        RequestBody dataBody = RequestBody.create(MediaType.parse("application/octet-stream"), data);
+        MultipartBody.Part dataPart = MultipartBody.Part.createFormData("data", "data", dataBody);
+        return execute(api.addUploadPart(uploadId, partNumberBody, dataPart));
+    }
+
+    /**
+     * Complete an Upload, assembling all uploaded Parts (ordered by part number) into a File.
+     */
+    public Upload completeUpload(String uploadId) {
+        return completeUpload(uploadId, new CompleteUploadRequest());
+    }
+
+    /**
+     * Complete an Upload, assembling the given Parts into a File.
+     */
+    public Upload completeUpload(String uploadId, CompleteUploadRequest request) {
+        return execute(api.completeUpload(uploadId, request));
+    }
+
+    /**
+     * Cancel an Upload. No Parts may be added after an Upload is cancelled.
+     */
+    public Upload cancelUpload(String uploadId) {
+        return execute(api.cancelUpload(uploadId));
+    }
+
+    /**
+     * List the Parts already uploaded for an Upload.
+     */
+    public OpenAiResponse<UploadPart> listUploadParts(String uploadId) {
+        return execute(api.listUploadParts(uploadId));
+    }
+
+    /**
+     * Convenience method: upload a local file in parts of the given size and complete the Upload.
+     * The request's filename and bytes are filled from the file when absent.
+     *
+     * @return the completed Upload, whose {@code file} field holds the ready File object
+     */
+    public Upload uploadFileInParts(CreateUploadRequest request, Path filepath, long partSize) {
+        try {
+            if (request.getFilename() == null) {
+                request.setFilename(filepath.getFileName().toString());
+            }
+            try (InputStream inputStream = Files.newInputStream(filepath)) {
+                return uploadStreamInParts(request, inputStream, Files.size(filepath), partSize);
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to upload file in parts: " + filepath, e);
+        }
+    }
+
+    /**
+     * Convenience method: upload an InputStream in parts of the given size and complete the Upload.
+     * Complements the Path variant for non-file sources (network streams, in-memory data, ...).
+     * The request must carry a filename; its bytes field is filled from totalBytes when absent.
+     * The stream is consumed but not closed by this method.
+     *
+     * @param totalBytes the total number of bytes the stream will provide
+     * @return the completed Upload, whose {@code file} field holds the ready File object
+     */
+    public Upload uploadStreamInParts(CreateUploadRequest request, InputStream inputStream, long totalBytes, long partSize) {
+        if (partSize <= 0) {
+            throw new IllegalArgumentException("partSize must be positive");
+        }
+        if (request.getFilename() == null) {
+            throw new IllegalArgumentException("request.filename is required when uploading from an InputStream");
+        }
+        if (request.getBytes() == null) {
+            request.setBytes(totalBytes);
+        }
+        Upload upload = createUpload(request);
+        try {
+            List<String> partIds = new ArrayList<>();
+            byte[] buffer = new byte[(int) Math.min(partSize, Integer.MAX_VALUE)];
+            long totalRead = 0;
+            int partNumber = 1;
+            int read;
+            while ((read = readFully(inputStream, buffer)) > 0) {
+                byte[] chunk = read == buffer.length ? buffer.clone() : Arrays.copyOf(buffer, read);
+                UploadPart part = addUploadPart(upload.getId(), partNumber++, chunk);
+                partIds.add(part.getId());
+                totalRead += read;
+            }
+            if (totalRead != totalBytes) {
+                throw new IllegalStateException("InputStream provided " + totalRead + " bytes but " + totalBytes + " were declared");
+            }
+            return completeUpload(upload.getId(), new CompleteUploadRequest(partIds));
+        } catch (IOException e) {
+            cancelUploadQuietly(upload.getId());
+            throw new IllegalStateException("Failed to upload stream in parts: " + request.getFilename(), e);
+        } catch (RuntimeException e) {
+            cancelUploadQuietly(upload.getId());
+            throw e;
+        }
+    }
+
+    private void cancelUploadQuietly(String uploadId) {
+        try {
+            cancelUpload(uploadId);
+        } catch (RuntimeException ignored) {
+            // best-effort cleanup; the upload session expires server-side anyway
+        }
+    }
+
+    private static int readFully(InputStream inputStream, byte[] buffer) throws IOException {
+        int offset = 0;
+        while (offset < buffer.length) {
+            int read = inputStream.read(buffer, offset, buffer.length - offset);
+            if (read == -1) {
+                break;
+            }
+            offset += read;
+        }
+        return offset;
     }
 
     public Batch createBatch(BatchRequest request) {
