@@ -1321,6 +1321,11 @@ public class OpenAiService {
                 String errorBody = e.response().errorBody().string();
 
                 OpenAiError error = mapper.readValue(errorBody, OpenAiError.class);
+                if (error == null || error.error == null) {
+                    // error body is not in OpenAI format (e.g. gateway/Bella-style errors);
+                    // rethrow the original HttpException so the real status and body survive
+                    throw e;
+                }
                 throw new OpenAiHttpException(error, e, e.code());
             } catch (IOException ex) {
                 // couldn't parse OpenAI error
