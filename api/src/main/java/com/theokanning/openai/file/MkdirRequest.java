@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -27,4 +29,19 @@ public class MkdirRequest {
     private String description;
 
     private String purpose;
+
+    /**
+     * 目录元数据。
+     */
+    private String metadata;
+
+    /**
+     * 目录所属城市列表。
+     */
+    private List<String> cities;
+
+    /**
+     * 目录标签列表。
+     */
+    private List<String> tags;
 }
