@@ -476,6 +476,27 @@ public class OpenAiService {
         return execute(api.findFiles(queryMap)).data;
     }
 
+    /**
+     * Count file nodes in a space or under a directory.
+     *
+     * @param spaceCode  optional space code; required when {@code ancestorId} is omitted
+     * @param ancestorId optional directory ID; when provided, only direct child nodes are counted
+     * @return counts grouped by file, directory and resource node types
+     */
+    public FileNodeCount countFiles(String spaceCode, String ancestorId) {
+        return execute(api.countFiles(spaceCode, ancestorId));
+    }
+
+    /**
+     * Count all file nodes in a space.
+     *
+     * @param spaceCode space code to count
+     * @return counts grouped by file, directory and resource node types
+     */
+    public FileNodeCount countFiles(String spaceCode) {
+        return countFiles(spaceCode, null);
+    }
+
     public File retrieveFileInfo(String fileId) {
         return execute(api.retrieveFileInfo(fileId));
     }

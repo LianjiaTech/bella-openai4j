@@ -296,6 +296,17 @@ public interface OpenAiApi {
     @GET("files/find")
     Single<OpenAiResponse<File>> findFiles(@QueryMap Map<String, Object> queryMap);
 
+    /**
+     * Count file nodes in a space or under a directory.
+     *
+     * @param spaceCode   optional space code; required when {@code ancestorId} is omitted
+     * @param ancestorId  optional directory ID; when provided, only direct child nodes are counted
+     * @return counts grouped by file, directory and resource node types
+     */
+    @GET("files/count")
+    Single<FileNodeCount> countFiles(@Query("space_code") String spaceCode,
+                                     @Query("ancestor_id") String ancestorId);
+
     @GET("files/{file_id}/info")
     Single<File> retrieveFileInfo(@Path("file_id") String fileId);
 
