@@ -138,6 +138,15 @@ public interface OpenAiApi {
                             @Part("cities") RequestBody cities,
                             @Part("tags") RequestBody tags);
 
+    /**
+     * Import an existing object-storage object as a file node.
+     *
+     * @param request object path, file metadata, target space and directory
+     * @return the imported file
+     */
+    @POST("files/import")
+    Single<File> importFile(@Body FileImportRequest request);
+
     // --- File list ---
 
     @GET("files")

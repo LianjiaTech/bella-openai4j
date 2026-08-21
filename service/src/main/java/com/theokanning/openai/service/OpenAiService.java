@@ -652,6 +652,16 @@ public class OpenAiService {
         return execute(api.uploadFile(spaceCode, purposeBody, body));
     }
 
+    /**
+     * Import an existing object-storage object as a file node.
+     *
+     * @param request object path, file metadata, target space and directory
+     * @return the imported file
+     */
+    public File importFile(FileImportRequest request) {
+        return execute(api.importFile(request));
+    }
+
     public File uploadFile(FileUploadRequest request, byte[] bytes, String filename) {
         MultipartBody.Part filePart = MultipartBody.Part.createFormData("file", filename,
                 RequestBody.create(FileUtils.extraMediaType(filename), bytes));
