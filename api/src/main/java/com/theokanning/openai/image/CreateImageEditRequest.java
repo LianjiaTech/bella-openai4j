@@ -46,4 +46,9 @@ public class CreateImageEditRequest {
      * A unique identifier representing your end-user, which will help OpenAI to monitor and detect abuse.
      */
     String user;
+
+    /**
+     * Whether or not content filter should be enabled for this image request. This param is only supported for mlx-serve. Defaults to false.
+     */
+    boolean safety;
 }

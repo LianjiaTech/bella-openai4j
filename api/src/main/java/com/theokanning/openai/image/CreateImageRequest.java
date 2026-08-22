@@ -74,4 +74,9 @@ public class CreateImageRequest {
      * If transparent, the output format needs to support transparency, so it should be set to either png (default value) or webp.
      */
     String background;
+
+    /**
+     * Whether or not content filter should be enabled for this image request. This param is only supported for mlx-serve. Defaults to false.
+     */
+    boolean safety;
 }
