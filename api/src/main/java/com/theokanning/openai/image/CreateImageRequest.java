@@ -1,7 +1,19 @@
 package com.theokanning.openai.image;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 /**
  * A request for OpenAi to create an image based on a prompt
@@ -79,4 +91,41 @@ public class CreateImageRequest {
      * Whether or not content filter should be enabled for this image request. This param is only supported for mlx-serve. Defaults to false.
      */
     boolean safety;
+
+    /**
+     * LoRA adapters to attach to the request.
+     *
+     * Multiple adapters are supported and are sent as lora_paths + lora_scales.
+     */
+    @JsonIgnore
+    @Builder.Default
+    List<LoraAdapter> loras = new ArrayList<>();
+
+    /**
+     * Paths for all LoRA adapters that have a path selected.
+     */
+    @JsonProperty("lora_paths")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    public List<String> getLoraPaths() {
+        if (loras == null) {
+            return Collections.emptyList();
+        }
+
+        return loras.stream().filter(lora -> lora != null && lora.getPath() != null && !lora.getPath().isEmpty())
+                .map(LoraAdapter::getPath).collect(Collectors.toList());
+    }
+
+    /**
+     * Scales corresponding to lora_paths.
+     */
+    @JsonProperty("lora_scales")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    public List<Double> getLoraScales() {
+        if (loras == null) {
+            return Collections.emptyList();
+        }
+
+        return loras.stream().filter(lora -> lora != null && lora.getPath() != null && !lora.getPath().isEmpty())
+                .map(LoraAdapter::getScale).collect(Collectors.toList());
+    }
 }
