@@ -321,6 +321,17 @@ public interface OpenAiApi {
 
     // --- Update metadata ---
 
+    /**
+     * Update file or directory metadata.
+     *
+     * @param fileId  file or directory ID
+     * @param request metadata update request
+     * @return the updated file or directory
+     */
+    @PUT("files/{file_id}/metadata")
+    Single<File> updateFileMetadata(@Path("file_id") String fileId,
+                                    @Body FileMetadataUpdateRequest request);
+
     @PUT("files/{file_id}/description")
     Single<File> updateFileDescription(@Path("file_id") String fileId,
                                        @Body FileDescriptionUpdateRequest request);

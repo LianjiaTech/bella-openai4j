@@ -501,6 +501,20 @@ public class OpenAiService {
         return execute(api.retrieveFileInfo(fileId));
     }
 
+    /**
+     * Update file or directory metadata.
+     *
+     * @param fileId   file or directory ID
+     * @param metadata new metadata value
+     * @return the updated file or directory
+     */
+    public File updateFileMetadata(String fileId, String metadata) {
+        FileMetadataUpdateRequest request = FileMetadataUpdateRequest.builder()
+                .metadata(metadata)
+                .build();
+        return execute(api.updateFileMetadata(fileId, request));
+    }
+
     public File updateFileDescription(String fileId, String description) {
         FileDescriptionUpdateRequest request = FileDescriptionUpdateRequest.builder()
                 .description(description)
