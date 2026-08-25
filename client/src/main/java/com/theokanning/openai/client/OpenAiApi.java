@@ -332,6 +332,17 @@ public interface OpenAiApi {
     Single<File> updateFileMetadata(@Path("file_id") String fileId,
                                     @Body FileMetadataUpdateRequest request);
 
+    /**
+     * Update file or directory creator information.
+     *
+     * @param fileId  file or directory ID
+     * @param request creator fields to update; at least one field is required
+     * @return the updated file or directory
+     */
+    @PUT("files/{file_id}/creator")
+    Single<File> updateFileCreator(@Path("file_id") String fileId,
+                                   @Body FileCreatorUpdateRequest request);
+
     @PUT("files/{file_id}/description")
     Single<File> updateFileDescription(@Path("file_id") String fileId,
                                        @Body FileDescriptionUpdateRequest request);

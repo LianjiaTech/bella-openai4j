@@ -515,6 +515,24 @@ public class OpenAiService {
         return execute(api.updateFileMetadata(fileId, request));
     }
 
+    /**
+     * Update file or directory creator information.
+     *
+     * @param fileId    file or directory ID
+     * @param cuid      creator ID, optional
+     * @param cuName    creator name, optional
+     * @param createdAt creation time in Unix milliseconds, optional
+     * @return the updated file or directory
+     */
+    public File updateFileCreator(String fileId, Long cuid, String cuName, Long createdAt) {
+        FileCreatorUpdateRequest request = FileCreatorUpdateRequest.builder()
+                .cuid(cuid)
+                .cuName(cuName)
+                .createdAt(createdAt)
+                .build();
+        return execute(api.updateFileCreator(fileId, request));
+    }
+
     public File updateFileDescription(String fileId, String description) {
         FileDescriptionUpdateRequest request = FileDescriptionUpdateRequest.builder()
                 .description(description)
