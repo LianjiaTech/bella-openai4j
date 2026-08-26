@@ -360,9 +360,28 @@ public interface OpenAiApi {
     @GET("files/exists")
     Single<FileExistsResponse> fileExists(@QueryMap Map<String, Object> queryMap);
 
+    /**
+     * Move a file or directory within or across spaces.
+     *
+     * <p>Use {@code target_space_code} in the request body for the target space.
+     * It is required when moving across spaces to a target-space root.</p>
+     *
+     * @param request file ID, target directory and optional target space
+     * @return the moved file or directory
+     */
     @POST("files/move")
     Single<File> moveFile(@Body FileMoveRequest request);
 
+    /**
+     * Move a file or directory within or across spaces with a legacy space header.
+     *
+     * <p>The target space is still expressed by {@code target_space_code} in the
+     * request body.</p>
+     *
+     * @param spaceCode legacy space header value
+     * @param request   file ID, target directory and optional target space
+     * @return the moved file or directory
+     */
     @POST("files/move")
     Single<File> moveFile(@Header("X-BELLA-SPACE-CODE") String spaceCode,
                           @Body FileMoveRequest request);

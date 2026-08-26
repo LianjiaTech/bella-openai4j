@@ -24,4 +24,11 @@ public class FileMoveRequest {
 
     @JsonProperty("ancestor_id")
     private String ancestorId;
+
+    /**
+     * 目标空间。为空时由服务端根据目标目录或文件当前空间推断。
+     * 跨空间移动到目标空间根目录时，仅设置该字段即可。
+     */
+    @JsonProperty("target_space_code")
+    private String targetSpaceCode;
 }

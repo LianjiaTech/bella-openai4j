@@ -560,6 +560,15 @@ public class OpenAiService {
         return execute(api.fileExists(queryMap));
     }
 
+    /**
+     * Move a file or directory within or across spaces.
+     *
+     * <p>Set {@code targetSpaceCode} on the request for cross-space moves. To
+     * move to a target-space root, leave {@code ancestorId} unset.</p>
+     *
+     * @param request file ID, target directory and optional target space
+     * @return the moved file or directory
+     */
     public File moveFile(FileMoveRequest request) {
         return execute(api.moveFile(request.getSpaceCode(), request));
     }
