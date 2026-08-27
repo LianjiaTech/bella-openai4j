@@ -117,7 +117,6 @@ import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -792,8 +791,16 @@ public class OpenAiService {
      * Add a chunk of bytes to an Upload as a Part.
      */
     public UploadPart addUploadPart(String uploadId, int partNumber, byte[] data) {
+        return addUploadPart(uploadId, partNumber, data, 0, data.length);
+    }
+
+    /**
+     * 将缓冲区中的指定字节范围作为一个 Part 上传，不复制源缓冲区。
+     * 请求同步执行，方法返回后调用方可以安全复用缓冲区。
+     */
+    public UploadPart addUploadPart(String uploadId, int partNumber, byte[] data, int offset, int byteCount) {
         RequestBody partNumberBody = RequestBody.create(MultipartBody.FORM, String.valueOf(partNumber));
-        RequestBody dataBody = RequestBody.create(MediaType.parse("application/octet-stream"), data);
+        RequestBody dataBody = RequestBody.create(MediaType.parse("application/octet-stream"), data, offset, byteCount);
         MultipartBody.Part dataPart = MultipartBody.Part.createFormData("data", "data", dataBody);
         return execute(api.addUploadPart(uploadId, partNumberBody, dataPart));
     }
@@ -858,6 +865,9 @@ public class OpenAiService {
         if (partSize <= 0) {
             throw new IllegalArgumentException("partSize must be positive");
         }
+        if (partSize > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException("partSize must not exceed " + Integer.MAX_VALUE);
+        }
         if (request.getFilename() == null) {
             throw new IllegalArgumentException("request.filename is required when uploading from an InputStream");
         }
@@ -867,13 +877,12 @@ public class OpenAiService {
         Upload upload = createUpload(request);
         try {
             List<String> partIds = new ArrayList<>();
-            byte[] buffer = new byte[(int) Math.min(partSize, Integer.MAX_VALUE)];
+            byte[] buffer = new byte[(int) partSize];
             long totalRead = 0;
             int partNumber = 1;
             int read;
             while ((read = readFully(inputStream, buffer)) > 0) {
-                byte[] chunk = read == buffer.length ? buffer.clone() : Arrays.copyOf(buffer, read);
-                UploadPart part = addUploadPart(upload.getId(), partNumber++, chunk);
+                UploadPart part = addUploadPart(upload.getId(), partNumber++, buffer, 0, read);
                 partIds.add(part.getId());
                 totalRead += read;
             }
